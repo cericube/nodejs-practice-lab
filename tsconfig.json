@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    /* ------------------------------------------------------------
+     * Environment & Module (실행 환경 및 모듈 해석)
+     * ------------------------------------------------------------ */
+    "target": "ES2022", // 출력되는 JS 문법 버전. Node.js 18 이상 환경에 최적화
+    "module": "ESNext", // 최신 ESM(import/export) 문법 사용
+    "moduleResolution": "bundler", // tsx, Vite 등의 도구를 사용할 때 가장 편리한 경로 해석 방식
+    // (import 시 .js 확장자를 강제하지 않아도 됨)
+    "lib": ["ES2022"], // 개발 시 사용할 전역 API 타입 (fetch, Promise 등)
+    "types": ["node"], // process, __dirname 등 Node.js 전역 변수 타입 활성화
+    //"types": ["node", "vitest/globals"], // vitest 사용시
+    /* ------------------------------------------------------------
+     * Strict Type Checking (엄격한 타입 검사)
+     * ------------------------------------------------------------ */
+    "strict": true, // TS의 모든 엄격한 검사 옵션을 한 번에 활성화
+    "exactOptionalPropertyTypes": true, // { a?: string }에서 a에 명시적으로 undefined 할당 금지
+    "isolatedModules": true, // 각 파일을 독립된 모듈로 처리 (ESM 환경에서의 안전성 보장)
+    "skipLibCheck": true, // node_modules 내 라이브러리 타입 검사 생략 (빌드 속도 향상)
+
+    /* ------------------------------------------------------------
+     * Advanced Rules (고급 안전 규칙)
+     * ------------------------------------------------------------ */
+    "verbatimModuleSyntax": true, // 타입 전용 import는 컴파일 시 확실히 제거 (성능 및 호환성)
+    "noUncheckedSideEffectImports": true, // 내용 없는 import(예: import './style.css') 엄격 검사
+    "moduleDetection": "force", // 모든 파일을 모듈로 간주하여 전역 스코프 오염 방지
+    "sourceMap": true, // 실행 중 에러 발생 시 .ts 원본 소스 위치 추적 가능
+    "declaration": false, // 백엔드 서비스는 보통 d.ts 필요 없음
+    "declarationMap": false
+  },
+
+  /* ------------------------------------------------------------
+   * Scope (범위 설정)
+   * ------------------------------------------------------------ */
+  "include": ["./dummy.ts"], //(이 설정을 통해 "No inputs found" 에러를 해결함)
+  "exclude": ["node_modules", "**/dist/*"]
+}

@@ -1,0 +1,15 @@
+{
+  // 1. 루트의 공통 설정을 그대로 가져옵니다.
+  "extends": "../tsconfig.json",
+
+  "compilerOptions": {
+    // 2. 이 프로젝트만의 소스 및 출력 경로 설정
+    // 주석처리 : TypeScript가 자동으로 rootDir를 vitest로 계산합니다.
+    "rootDir": "./src", // 작성할 소스 코드 위치
+    "outDir": "./dist" // 컴파일된 JS 파일이 저장될 위치
+  },
+
+  // 3. 실제 검사 및 컴파일 대상 지정
+  "include": ["src/**/*", "src/shared"], // src 폴더 안의 모든 파일을 대상으로 함
+  "exclude": ["node_modules", "dist"]
+}
