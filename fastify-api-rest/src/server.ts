@@ -13,7 +13,6 @@ async function startServer() {
   const shutdown = async (signal: string) => {
     if (isShuttingDown) return;
     isShuttingDown = true;
-
     try {
       app.log.info({ signal }, 'Gracefully shutting down');
       // - keep-alive 연결 정리

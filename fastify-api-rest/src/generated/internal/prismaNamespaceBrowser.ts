@@ -83,7 +83,8 @@ export const UserScalarFieldEnum = {
   deletedAt: 'deletedAt',
   email: 'email',
   phoneNumber: 'phoneNumber',
-  displayName: 'displayName'
+  displayName: 'displayName',
+  passwordHash: 'passwordHash'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -111,7 +112,7 @@ export const PostScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt',
+  publishedAt: 'publishedAt',
   title: 'title',
   content: 'content',
   published: 'published',

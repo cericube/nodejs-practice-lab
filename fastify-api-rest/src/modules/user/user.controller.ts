@@ -1,73 +1,65 @@
-import type { UserCreateBodyDto, UserResponseDto } from './user.dto';
+// src/module/user/user.controller.ts
+import type {
+  UserCountDto,
+  UserCountQueryDto,
+  UserCreateBodyDto,
+  UserDetailResponseDto,
+  UserExistsDto,
+  UserIdParamsDto,
+  UserListQueryDto,
+  UserListResponseDto,
+  UserQueryDto,
+  UserResponseDto,
+  UserUpdateBodyDto,
+} from './user.dto';
 import type { UserService } from './user.service';
 
 /**
- * UserController
- *
- * ✔ HTTP 계층 전용 책임
- * ✔ Request → DTO 해석
- * ✔ Service 호출
- * ✔ Response DTO 반환
- *
- * Controller의 역할:
- * - HTTP 프레임워크(Fastify, Express 등)와 가장 가까운 계층
- * - 비즈니스 로직을 직접 수행하지 않음
- * - 입력/출력 타입을 DTO로 고정하여 API 계약(Contract) 역할 수행
- *
- * 계층 흐름:
- * Route → Controller → Service → Repository → DB
+ * [Controller Layer: 실행 조정 계층]
+ * - Route 계층으로부터 전달받은 순수 데이터(DTO)를 비즈니스 로직에 매핑합니다.
+ * - HTTP 프로토콜의 복잡함(request, reply)을 제거하여 서비스 로직을 순수하게 유지합니다.
+ * - 로직(if, loop 등) 없이 요청을 서비스로 전달만 하므로 테스트 생략 권장..
  */
 export class UserController {
-  /**
-   * UserService 의존성 주입
-   *
-   * - 실제 구현체는 app bootstrap 또는 DI 컨테이너에서 주입
-   * - 테스트 시 mock service로 대체 가능
-   */
   constructor(private readonly userService: UserService) {}
 
-  /**
-   * 사용자 생성 API 핸들러 (비즈니스 진입점)
-   *
-   * @param data UserCreateBodyDto
-   * - Route 계층에서 이미 Schema 검증 완료된 데이터
-   * - Controller에서는 추가 검증 없이 그대로 Service로 전달
-   *
-   * @returns UserResponseDto
-   * - API 응답 스키마와 1:1 매칭되는 DTO
-   * - 내부 엔티티/ORM 타입을 외부로 노출하지 않음
-   *
-   * 구현 원칙:
-   * - 비즈니스 규칙 포함 ❌
-   * - 트랜잭션, 중복 체크 등은 Service 책임
-   * - Controller는 흐름 오케스트레이션만 담당
-   */
+  /** 사용자를 생성하고 그 결과를 반환 (POST 대응) */
   async createUser(data: UserCreateBodyDto): Promise<UserResponseDto> {
-    return await this.userService.register(data);
+    return await this.userService.createUser(data);
+  }
+
+  /** 사용자의 일부 정보를 수정 (PATCH 대응) */
+  async updateUser(userId: UserIdParamsDto, input: UserUpdateBodyDto): Promise<UserResponseDto> {
+    return await this.userService.updateUser(userId, input);
+  }
+
+  /** 삭제(Soft-deleted)된 사용자를 다시 활성화 (PATCH restore 대응) */
+  async restoreUser(userId: UserIdParamsDto): Promise<UserResponseDto> {
+    return await this.userService.restoreUser(userId);
+  }
+
+  /** 사용자를 시스템상에서 '삭제' 상태로 변경 (DELETE 대응) */
+  async softDeleteUser(userId: UserIdParamsDto): Promise<UserResponseDto> {
+    return await this.userService.softDeleteUser(userId);
+  }
+
+  /** 검색 조건에 맞는 특정 사용자 정보를 가져옴 (GET 대응) */
+  async getUser(query: UserQueryDto): Promise<UserDetailResponseDto> {
+    return await this.userService.getUser(query);
+  }
+
+  /** 다수의 사용자 목록을 필터링하여 가져옴 (GET list 대응) */
+  async listUsers(query: UserListQueryDto): Promise<UserListResponseDto> {
+    return await this.userService.listUsers(query);
+  }
+
+  /** 조건에 맞는 사용자가 데이터베이스에 있는지 확인 (GET exists 대응) */
+  async existsUser(where: UserQueryDto): Promise<UserExistsDto> {
+    return await this.userService.existsUser(where);
+  }
+
+  /** 특정 조건의 사용자가 총 몇 명인지 계산 (GET count 대응) */
+  async countUser(query: UserCountQueryDto): Promise<UserCountDto> {
+    return await this.userService.countUser(query);
   }
 }
-
-/*
-────────────────────────────────────────────────────────────
-메서드 선언 방식에 대한 보충 설명
-────────────────────────────────────────────────────────────
-
-현재 방식:
-
-  async createUser(...) { ... }
-
-✔ 이 메서드는 UserController.prototype에 존재
-✔ 모든 인스턴스가 동일한 함수 객체를 공유
-✔ 메모리 효율적이며 일반적인 클래스 메서드 패턴
-
-대안 방식:
-
-  createUser = async (...) => { ... }
-
-✔ this가 렉시컬 바인딩되어 Fastify handler로 바로 전달 가능
-❌ 인스턴스마다 함수가 새로 생성됨
-
-실무 기준 권장:
-- Router에서 controller.createUser(...) 형태로 감싸서 호출 → 현재 방식 권장
-- handler로 직접 바인딩해야 하면 arrow function 방식 고려
-*/

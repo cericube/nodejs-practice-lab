@@ -1,61 +1,42 @@
-/**
- * 시스템 전반에서 공통으로 사용하는 에러 코드 정의
- *
- * 목적:
- * - 프론트엔드 분기 처리 기준
- * - 로그/모니터링 집계 키
- * - 다국어 메시지 매핑 키
- *
- * 규칙:
- * - 대문자 + SNAKE_CASE
- * - HTTP Status 와 직접 1:1 매핑하지 않음 (의미 기준)
- */
 export enum ErrorCode {
   // =========================
-  // COMMON
+  // COMMON / SYSTEM
   // =========================
-  UNKNOWN = 'UNKNOWN',
-  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
+  UNKNOWN = 'UNKNOWN', // 분류되지 않은 알 수 없는 오류
+  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR', // 서버 내부 처리 중 예외
 
   // =========================
-  // AUTH / SECURITY
+  // AUTHENTICATION / AUTHORIZATION
   // =========================
-  UNAUTHORIZED = 'UNAUTHORIZED', // 인증 실패
-  FORBIDDEN = 'FORBIDDEN', // 권한 없음
-  TOKEN_EXPIRED = 'TOKEN_EXPIRED',
-  TOKEN_INVALID = 'TOKEN_INVALID',
+  UNAUTHORIZED = 'UNAUTHORIZED', // 인증 정보 없음 또는 인증 실패
+  FORBIDDEN = 'FORBIDDEN', // 인증은 되었으나 접근 권한 없음
+
+  TOKEN_EXPIRED = 'TOKEN_EXPIRED', // 토큰 만료
+  TOKEN_INVALID = 'TOKEN_INVALID', // 토큰 형식 또는 서명 오류
+  TOKEN_REVOKED = 'TOKEN_REVOKED', // 서버에서 폐기된 토큰
 
   // =========================
   // VALIDATION / INPUT
   // =========================
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  INVALID_PARAMETER = 'INVALID_PARAMETER',
-  MISSING_PARAMETER = 'MISSING_PARAMETER',
+  VALIDATION_ERROR = 'VALIDATION_ERROR', // 입력 값 형식 또는 스키마 검증 실패
 
   // =========================
-  // RESOURCE
+  // RESOURCE / DOMAIN
   // =========================
-  NOT_FOUND = 'NOT_FOUND',
-  ALREADY_EXISTS = 'ALREADY_EXISTS',
-  CONFLICT = 'CONFLICT',
+  NOT_FOUND = 'NOT_FOUND', // 요청한 리소스를 찾을 수 없음
+  ALREADY_EXISTS = 'ALREADY_EXISTS', // 이미 존재하는 리소스
 
   // =========================
-  // BUSINESS RULE
+  // DATABASE (Prisma / Persistence)
   // =========================
-  INVALID_STATE = 'INVALID_STATE',
-  OPERATION_NOT_ALLOWED = 'OPERATION_NOT_ALLOWED',
-  QUOTA_EXCEEDED = 'QUOTA_EXCEEDED',
+  //DB_ERROR = 'DB_ERROR', // 데이터베이스 처리 중 일반 오류
+  //DB_CONSTRAINT_VIOLATION = 'DB_CONSTRAINT_VIOLATION', // 유니크 / FK / 제약조건 위반
+  DB_TRANSACTION_FAILED = 'DB_TRANSACTION_FAILED', // 트랜잭션 처리 실패
 
   // =========================
-  // DATABASE
+  // EXTERNAL / INTEGRATION
   // =========================
-  DB_ERROR = 'DB_ERROR',
-  DB_CONSTRAINT_VIOLATION = 'DB_CONSTRAINT_VIOLATION',
-  DB_RECORD_NOT_FOUND = 'DB_RECORD_NOT_FOUND',
-
-  // =========================
-  // EXTERNAL SERVICE
-  // =========================
-  EXTERNAL_API_ERROR = 'EXTERNAL_API_ERROR',
-  EXTERNAL_TIMEOUT = 'EXTERNAL_TIMEOUT',
+  EXTERNAL_API_ERROR = 'EXTERNAL_API_ERROR', // 외부 API 호출 실패
+  EXTERNAL_TIMEOUT = 'EXTERNAL_TIMEOUT', // 외부 서비스 응답 지연
+  EXTERNAL_SERVICE_UNAVAILABLE = 'EXTERNAL_SERVICE_UNAVAILABLE', // 외부 서비스 장애
 }

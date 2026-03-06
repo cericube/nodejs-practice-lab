@@ -27,13 +27,16 @@ datasource db {
 model User {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  updatedAt DateTime  @updatedAt @map("updated_at") //자동 타임스탬프 관리 데코레이터
   deletedAt DateTime? @map("deleted_at")
 
   // 로그인 및 식별용 유니크 필드
   email       String  @unique
   phoneNumber String  @unique @map("phone_number") // E.164 포맷 권장 (+821012345678)
   displayName String? @map("display_name")
+
+  // 인증용
+  passwordHash String? @map("password_hash")
 
   // Relations
   profile Profile?
@@ -54,7 +57,7 @@ model User {
 model Profile {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  updatedAt DateTime  @updatedAt @map("updated_at") // 자동 타임스탬프 관리 데코레이터
   deletedAt DateTime? @map("deleted_at")
 
   bio String?
@@ -80,11 +83,12 @@ model Profile {
 // =========================
 // 게시글 본문 테이블
 // 트래픽이 높은 컬럼은 cache column 형태로 유지 (view/like/reply count)
+// Post 삭제는 물리적 삭제이다.
 model Post {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at") // 자동 타임스탬프 관리 데코레이터
+  publishedAt DateTime? @map("published_at") // 게시글 공개 시점 (published=true인 경우 null 불가)
 
   title     String
   content   String?
@@ -105,13 +109,21 @@ model Post {
   files     PostFile[]
   viewStats PostViewStat[]
 
-  // createdAt + id 복합 unique → cursor pagination 안정성 확보
-  @@unique([createdAt, id])
-  // 주요 조회 패턴 대응 인덱스
-  @@index([authorId, createdAt]) // 사용자별 게시글
-  @@index([published, createdAt]) // 공개 게시글 최신순
-  @@index([published, viewCount, createdAt]) // 인기글 정렬
-  @@index([deletedAt])
+  // 인덱스 설계
+  // LIKE '%keyword%' 쿼리는 인덱스들을 못 타고 Full Table Scan을 유발-> 개선 필요
+  // 1. 내 글 목록: 작성자별 최신순 (ID가 최신성을 보장하므로 createdAt 제외)
+  @@index([authorId, id(sort: Desc)])
+  // 2. 전체 목록: 공개 여부별 최신순
+  // 비공개 글이 적더라도 [published, id] 인덱스가 있으면,
+  // DB는 정렬된 데이터를 얻기 위해 인덱스를 활용할 수 있음
+  @@index([published, id(sort: Desc)])
+  // 3. 수치 기반 인기순: (공개글 중) 인기순 + 최신성 보장(id)
+  @@index([published, viewCount(sort: Desc), id(sort: Desc)])
+  @@index([published, likeCount(sort: Desc), id(sort: Desc)])
+  @@index([published, replyCount(sort: Desc), id(sort: Desc)])
+  // 4. 날짜 범위 검색용 (날짜 필터가 빈번할 경우만 유지, 정렬용 아님)
+  // 정렬은 여전히 id(sort: Desc)를 활용할 수 있음
+  @@index([createdAt])
   @@map("posts")
 }
 
@@ -123,7 +135,7 @@ model Post {
 model Reply {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  updatedAt DateTime  @updatedAt @map("updated_at") // 자동 타임스탬프 관리 데코레이터
   deletedAt DateTime? @map("deleted_at")
 
   content String
@@ -154,7 +166,7 @@ model PostLike {
   postId Int @map("post_id")
 
   createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  updatedAt DateTime  @updatedAt @map("updated_at") // 자동 타임스탬프 관리 데코레이터
   deletedAt DateTime? @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -175,7 +187,7 @@ model PostLike {
 model PostFile {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  updatedAt DateTime  @updatedAt @map("updated_at") // 자동 타임스탬프 관리 데코레이터
   deletedAt DateTime? @map("deleted_at")
 
   fileKey     String @map("file_key") // Object Storage key

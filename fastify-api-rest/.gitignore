@@ -4,5 +4,4 @@ html
 coverage
 .env
 .env.test
-
-/src/generated/prisma
+logs

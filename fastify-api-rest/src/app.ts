@@ -8,6 +8,8 @@ import { errorHandler } from './common/errors/error.handler';
 
 import { prismaPlugin } from './plugins/prisma.plugin';
 import { routes } from './route';
+import { ErrorCode } from './common/errors/error.codes';
+import { BusinessError } from './common/errors/busuness.error';
 
 // ================================
 // Fastify Application Factory
@@ -35,7 +37,7 @@ export const createApp = async () => {
               // (pino-pretty 패키지 필요)
               {
                 target: 'pino-pretty',
-                level: 'info',
+                level: env.LOG_LEVEL,
                 options: {
                   colorize: true,
                   translateTime: 'yyyy-mm-dd HH:MM:ss',
@@ -46,7 +48,7 @@ export const createApp = async () => {
               {
                 target: 'pino/file',
                 options: { destination: env.LOG_PATH, mkdir: true },
-                level: 'info',
+                level: env.LOG_LEVEL,
               },
         ],
       },
@@ -61,7 +63,7 @@ export const createApp = async () => {
     // TCP 연결 및 요청 타임아웃 정책
     connectionTimeout: 10_000, // 소켓 연결 제한
     keepAliveTimeout: 5_000, // keep-alive 유지 시간
-    requestTimeout: 30_000, // 요청 처리 전체 제한 시간
+    requestTimeout: 10_000, // 요청 처리 전체 제한 시간
 
     // --------------------------------
     // Reverse Proxy 환경 대응
@@ -117,6 +119,17 @@ export const createApp = async () => {
   // throw 된 모든 에러를 단일 응답 포맷으로 변환
   // (비즈니스 에러 / 검증 에러 / 시스템 에러 분리 처리)
   app.setErrorHandler(errorHandler);
+
+  // URL not found 처리 : 오류 포맷을 맞추기 위한 작업
+  app.setNotFoundHandler((request, reply) => {
+    const error = new BusinessError(
+      ErrorCode.NOT_FOUND,
+      `Route ${request.method}:${request.url} not found`,
+      404,
+    );
+
+    throw error; // 여기서 던지면 setErrorHandler로 이동합니다.
+  });
 
   // --------------------------------
   // 5. Routes (Application Layer)

@@ -13,8 +13,8 @@
 
 import fp from 'fastify-plugin';
 import type { FastifyInstance, FastifyPluginAsync } from 'fastify';
-import { prisma, registerPrismaLogger, shutdownPrisma } from '../config/prisma.config.js';
 import type { Logger } from 'pino';
+import { prisma, registerPrismaLogger, shutdownPrisma } from '../config/prisma.config';
 
 /**
  * Fastify 타입 확장 (Declaration Merging)
@@ -27,11 +27,12 @@ import type { Logger } from 'pino';
  * });
  * ```
  */
-declare module 'fastify' {
-  interface FastifyInstance {
-    prisma: typeof prisma;
-  }
-}
+// src/types/fastify.d.ts
+// declare module 'fastify' {
+//   interface FastifyInstance {
+//     prisma: typeof prisma;
+//   }
+// }
 
 /**
  * Prisma 플러그인 본체

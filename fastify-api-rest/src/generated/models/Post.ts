@@ -46,7 +46,7 @@ export type PostMinAggregateOutputType = {
   id: number | null
   createdAt: Date | null
   updatedAt: Date | null
-  deletedAt: Date | null
+  publishedAt: Date | null
   title: string | null
   content: string | null
   published: boolean | null
@@ -60,7 +60,7 @@ export type PostMaxAggregateOutputType = {
   id: number | null
   createdAt: Date | null
   updatedAt: Date | null
-  deletedAt: Date | null
+  publishedAt: Date | null
   title: string | null
   content: string | null
   published: boolean | null
@@ -74,7 +74,7 @@ export type PostCountAggregateOutputType = {
   id: number
   createdAt: number
   updatedAt: number
-  deletedAt: number
+  publishedAt: number
   title: number
   content: number
   published: number
@@ -106,7 +106,7 @@ export type PostMinAggregateInputType = {
   id?: true
   createdAt?: true
   updatedAt?: true
-  deletedAt?: true
+  publishedAt?: true
   title?: true
   content?: true
   published?: true
@@ -120,7 +120,7 @@ export type PostMaxAggregateInputType = {
   id?: true
   createdAt?: true
   updatedAt?: true
-  deletedAt?: true
+  publishedAt?: true
   title?: true
   content?: true
   published?: true
@@ -134,7 +134,7 @@ export type PostCountAggregateInputType = {
   id?: true
   createdAt?: true
   updatedAt?: true
-  deletedAt?: true
+  publishedAt?: true
   title?: true
   content?: true
   published?: true
@@ -235,7 +235,7 @@ export type PostGroupByOutputType = {
   id: number
   createdAt: Date
   updatedAt: Date
-  deletedAt: Date | null
+  publishedAt: Date | null
   title: string
   content: string | null
   published: boolean
@@ -272,7 +272,7 @@ export type PostWhereInput = {
   id?: Prisma.IntFilter<"Post"> | number
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
+  publishedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   title?: Prisma.StringFilter<"Post"> | string
   content?: Prisma.StringNullableFilter<"Post"> | string | null
   published?: Prisma.BoolFilter<"Post"> | boolean
@@ -291,7 +291,7 @@ export type PostOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   published?: Prisma.SortOrder
@@ -308,13 +308,12 @@ export type PostOrderByWithRelationInput = {
 
 export type PostWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  createdAt_id?: Prisma.PostCreatedAtIdCompoundUniqueInput
   AND?: Prisma.PostWhereInput | Prisma.PostWhereInput[]
   OR?: Prisma.PostWhereInput[]
   NOT?: Prisma.PostWhereInput | Prisma.PostWhereInput[]
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
+  publishedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   title?: Prisma.StringFilter<"Post"> | string
   content?: Prisma.StringNullableFilter<"Post"> | string | null
   published?: Prisma.BoolFilter<"Post"> | boolean
@@ -327,13 +326,13 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   likes?: Prisma.PostLikeListRelationFilter
   files?: Prisma.PostFileListRelationFilter
   viewStats?: Prisma.PostViewStatListRelationFilter
-}, "id" | "createdAt_id">
+}, "id">
 
 export type PostOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   published?: Prisma.SortOrder
@@ -355,7 +354,7 @@ export type PostScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Post"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null
+  publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null
   title?: Prisma.StringWithAggregatesFilter<"Post"> | string
   content?: Prisma.StringNullableWithAggregatesFilter<"Post"> | string | null
   published?: Prisma.BoolWithAggregatesFilter<"Post"> | boolean
@@ -368,7 +367,7 @@ export type PostScalarWhereWithAggregatesInput = {
 export type PostCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -386,7 +385,7 @@ export type PostUncheckedCreateInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -403,7 +402,7 @@ export type PostUncheckedCreateInput = {
 export type PostUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -421,7 +420,7 @@ export type PostUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -439,7 +438,7 @@ export type PostCreateManyInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -452,7 +451,7 @@ export type PostCreateManyInput = {
 export type PostUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -465,7 +464,7 @@ export type PostUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -485,16 +484,11 @@ export type PostOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type PostCreatedAtIdCompoundUniqueInput = {
-  createdAt: Date | string
-  id: number
-}
-
 export type PostCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
   published?: Prisma.SortOrder
@@ -516,7 +510,7 @@ export type PostMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
   published?: Prisma.SortOrder
@@ -530,7 +524,7 @@ export type PostMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
+  publishedAt?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
   published?: Prisma.SortOrder
@@ -658,7 +652,7 @@ export type PostUpdateOneRequiredWithoutViewStatsNestedInput = {
 export type PostCreateWithoutAuthorInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -675,7 +669,7 @@ export type PostUncheckedCreateWithoutAuthorInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -721,7 +715,7 @@ export type PostScalarWhereInput = {
   id?: Prisma.IntFilter<"Post"> | number
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
+  publishedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null
   title?: Prisma.StringFilter<"Post"> | string
   content?: Prisma.StringNullableFilter<"Post"> | string | null
   published?: Prisma.BoolFilter<"Post"> | boolean
@@ -734,7 +728,7 @@ export type PostScalarWhereInput = {
 export type PostCreateWithoutRepliesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -751,7 +745,7 @@ export type PostUncheckedCreateWithoutRepliesInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -783,7 +777,7 @@ export type PostUpdateToOneWithWhereWithoutRepliesInput = {
 export type PostUpdateWithoutRepliesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -800,7 +794,7 @@ export type PostUncheckedUpdateWithoutRepliesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -816,7 +810,7 @@ export type PostUncheckedUpdateWithoutRepliesInput = {
 export type PostCreateWithoutLikesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -833,7 +827,7 @@ export type PostUncheckedCreateWithoutLikesInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -865,7 +859,7 @@ export type PostUpdateToOneWithWhereWithoutLikesInput = {
 export type PostUpdateWithoutLikesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -882,7 +876,7 @@ export type PostUncheckedUpdateWithoutLikesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -898,7 +892,7 @@ export type PostUncheckedUpdateWithoutLikesInput = {
 export type PostCreateWithoutFilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -915,7 +909,7 @@ export type PostUncheckedCreateWithoutFilesInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -947,7 +941,7 @@ export type PostUpdateToOneWithWhereWithoutFilesInput = {
 export type PostUpdateWithoutFilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -964,7 +958,7 @@ export type PostUncheckedUpdateWithoutFilesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -980,7 +974,7 @@ export type PostUncheckedUpdateWithoutFilesInput = {
 export type PostCreateWithoutViewStatsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -997,7 +991,7 @@ export type PostUncheckedCreateWithoutViewStatsInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -1029,7 +1023,7 @@ export type PostUpdateToOneWithWhereWithoutViewStatsInput = {
 export type PostUpdateWithoutViewStatsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1046,7 +1040,7 @@ export type PostUncheckedUpdateWithoutViewStatsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1063,7 +1057,7 @@ export type PostCreateManyAuthorInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
+  publishedAt?: Date | string | null
   title: string
   content?: string | null
   published?: boolean
@@ -1075,7 +1069,7 @@ export type PostCreateManyAuthorInput = {
 export type PostUpdateWithoutAuthorInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1092,7 +1086,7 @@ export type PostUncheckedUpdateWithoutAuthorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1109,7 +1103,7 @@ export type PostUncheckedUpdateManyWithoutAuthorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1180,7 +1174,7 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  deletedAt?: boolean
+  publishedAt?: boolean
   title?: boolean
   content?: boolean
   published?: boolean
@@ -1200,7 +1194,7 @@ export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  deletedAt?: boolean
+  publishedAt?: boolean
   title?: boolean
   content?: boolean
   published?: boolean
@@ -1215,7 +1209,7 @@ export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  deletedAt?: boolean
+  publishedAt?: boolean
   title?: boolean
   content?: boolean
   published?: boolean
@@ -1230,7 +1224,7 @@ export type PostSelectScalar = {
   id?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  deletedAt?: boolean
+  publishedAt?: boolean
   title?: boolean
   content?: boolean
   published?: boolean
@@ -1240,7 +1234,7 @@ export type PostSelectScalar = {
   authorId?: boolean
 }
 
-export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "deletedAt" | "title" | "content" | "published" | "viewCount" | "likeCount" | "replyCount" | "authorId", ExtArgs["result"]["post"]>
+export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "publishedAt" | "title" | "content" | "published" | "viewCount" | "likeCount" | "replyCount" | "authorId", ExtArgs["result"]["post"]>
 export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   replies?: boolean | Prisma.Post$repliesArgs<ExtArgs>
@@ -1269,7 +1263,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id: number
     createdAt: Date
     updatedAt: Date
-    deletedAt: Date | null
+    publishedAt: Date | null
     title: string
     content: string | null
     published: boolean
@@ -1708,7 +1702,7 @@ export interface PostFieldRefs {
   readonly id: Prisma.FieldRef<"Post", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Post", 'DateTime'>
-  readonly deletedAt: Prisma.FieldRef<"Post", 'DateTime'>
+  readonly publishedAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly title: Prisma.FieldRef<"Post", 'String'>
   readonly content: Prisma.FieldRef<"Post", 'String'>
   readonly published: Prisma.FieldRef<"Post", 'Boolean'>

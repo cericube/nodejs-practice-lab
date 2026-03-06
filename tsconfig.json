@@ -14,7 +14,7 @@
      * Strict Type Checking (엄격한 타입 검사)
      * ------------------------------------------------------------ */
     "strict": true, // TS의 모든 엄격한 검사 옵션을 한 번에 활성화
-    "exactOptionalPropertyTypes": true, // { a?: string }에서 a에 명시적으로 undefined 할당 금지
+    "exactOptionalPropertyTypes": true, // { a?: string }에서 a에 명시적으로 undefined 할당 금지,(속성 없는것 != 값이 없는것 구분)
     "isolatedModules": true, // 각 파일을 독립된 모듈로 처리 (ESM 환경에서의 안전성 보장)
     "skipLibCheck": true, // node_modules 내 라이브러리 타입 검사 생략 (빌드 속도 향상)
 
