@@ -5,17 +5,21 @@ import { Type, type Static } from '@sinclair/typebox';
  * 쿼리 스트링(URL)은 모든 데이터가 기본적으로 'String'입니다.
  * Boolean 타입 캐스팅 에러 방지 및 '0/1' 등의 모호한 입력을 차단하기 위해 명시적 리터럴을 사용합니다.
  */
-const booleanSchema = Type.Union([Type.Literal('true'), Type.Literal('false')]);
+// const booleanSchema = Type.Union([Type.Literal('true'), Type.Literal('false')]);
 
 /**
- * [POST /posts] 게시글 생성을 위한 요청 바디
- * 물리적 삭제 환경에서는 유효한 authorId의 존재 여부를 서비스 레이어에서 반드시 체크해야 합니다.
+ * [POST /posts]
+ * 게시글 생성을 위한 요청 바디
+ *
+ * - 게시글의 기본 정보(title, content 등)를 포함합니다.
+ * - authorId는 게시글 소유권을 식별하기 위한 필드입니다.
+ * - 실제 authorId 유효성 검증은 서비스 레이어에서 수행합니다.
  */
 export const PostCreateBodySchema = Type.Object(
   {
     title: Type.String({ minLength: 1, maxLength: 255 }),
     content: Type.Optional(Type.String()),
-    published: Type.Optional(booleanSchema),
+    published: Type.Optional(Type.Boolean()),
     /** 게시글 소유권 할당을 위한 식별자 */
     authorId: Type.Integer(),
   },
@@ -24,52 +28,100 @@ export const PostCreateBodySchema = Type.Object(
 export type PostCreateBodyDto = Static<typeof PostCreateBodySchema>;
 
 /**
- * [DELETE/PATCH /posts/:id] 특정 게시글 접근을 위한 경로 파라미터
- * 물리적 삭제 시 데이터 복구가 불가능하므로, 요청 id와 authorId를 대조하여
- * 삭제 권한(소유권)을 검증하는 2중 보안 장치로 활용합니다.
+ * [DELETE /posts/:id]
+ * [PATCH /posts/:id]
+ *
+ * 특정 게시글을 식별하기 위한 Path Parameter
+ *
+ * - id : 대상 게시글의 고유 식별자
+ * - authorId : 요청자가 실제 게시글 작성자인지 확인하기 위한 보안 검증 필드
+ *
+ * 물리적 삭제 환경에서는 삭제된 데이터 복구가 불가능하므로
+ * 서비스 레이어에서 authorId와 실제 게시글 작성자를 비교하여
+ * 소유권 검증을 수행하는 것이 권장됩니다.
  */
 export const PostIdParamsSchema = Type.Object(
   {
     /** 대상 게시글의 고유 식별자 */
     id: Type.Integer(),
-    /** 보안 강화: 삭제/수정 요청 시 실제 소유주인지 대조하기 위한 작성자 ID */
-    authorId: Type.Integer(),
   },
   { $id: 'PostIdParams', additionalProperties: false },
 );
 export type PostIdParamsDto = Static<typeof PostIdParamsSchema>;
 
 /**
- * [PATCH /posts/:id] 게시글 수정을 위한 요청 바디
- * Partial을 적용하여 변경이 필요한 필드만 수신합니다.
+ * [PATCH /posts/:id]
+ * 게시글 수정 요청 바디
+ *
+ * - Partial 타입을 사용하여 변경이 필요한 필드만 전달합니다.
+ * - 전달되지 않은 필드는 기존 값을 유지합니다.
  */
 export const PostUpdateBodySchema = Type.Partial(
   Type.Object({
+    authorId: Type.Optional(Type.Integer()),
     title: Type.String({ minLength: 1, maxLength: 255 }),
     content: Type.String(),
-    published: Type.Optional(booleanSchema),
+    published: Type.Optional(Type.Boolean()),
   }),
   { $id: 'PostUpdateRequest', additionalProperties: false },
 );
 export type PostUpdateBodyDto = Static<typeof PostUpdateBodySchema>;
 
+export const PostDeleteQuerySchema = Type.Object(
+  {
+    /** 보안 강화: 삭제/수정 요청 시 실제 소유주인지 대조하기 위한 작성자 ID */
+    authorId: Type.Optional(Type.Integer()),
+  },
+  { $id: 'PostDeleteQuery', additionalProperties: false },
+);
+export type PostDeleteQueryDto = Static<typeof PostDeleteQuerySchema>;
+
 /**
- * 비즈니스 로직 오염 방지 및 사용자 직접 조작 방지를 위해 일반 수정 DTO와 분리합니다.
- * 물리적 삭제 시 관련 통계 데이터(PostViewStat 등)도 연쇄 삭제됩니다.
+ * [PATCH /posts/:id/counter]
+ *
+ * 게시글 통계 데이터 업데이트 요청
+ *
+ * viewCount, likeCount, replyCount 등은
+ * 일반 사용자 수정 요청과 분리하여 관리합니다.
+ *
+ * 목적
+ * - 사용자 입력 조작 방지
+ * - 비즈니스 로직 오염 방지
+ * - 내부 서비스 또는 이벤트 기반 업데이트 전용
  */
-export const PostUpdateAggregateBodySchema = Type.Object(
+export const PostUpdateCounterBodySchema = Type.Object(
   {
     viewCount: Type.Optional(Type.Integer()),
     likeCount: Type.Optional(Type.Integer()),
     replyCount: Type.Optional(Type.Integer()),
   },
-  { $id: 'PostUpdateAggregateRequest', additionalProperties: false },
+  { $id: 'PostUpdateCounterRequest', additionalProperties: false },
 );
-export type PostUpdateAggregateBodyDto = Static<typeof PostUpdateAggregateBodySchema>;
+export type PostUpdateCounterBodyDto = Static<typeof PostUpdateCounterBodySchema>;
 
 /**
- * KeySet 기반 페이지네이션 객체
- * 고유 ID와 정렬값을 조합한 커서를 사용하여 데이터 누락 및 중복 노출을 방지합니다.
+ * [GET /posts?id]
+ * 게시글 단건 조회 Query
+ *
+ * includeDraft 옵션
+ * - true  : draft 게시글 포함 조회
+ * - false : 공개된 게시글만 조회
+ *
+ * 일반 사용자 요청에서는 보통 draft 조회가 제한되며
+ * 관리자 또는 작성자 권한에서만 사용됩니다.
+ */
+export const PostQuerySchema = Type.Object({
+  id: Type.Integer(),
+  includeDraft: Type.Optional(Type.Boolean()),
+});
+export type PostQueryDto = Static<typeof PostQuerySchema>;
+
+/**
+ * Keyset 기반 페이지네이션 커서
+ *
+ * - id + 정렬 기준값(value)을 조합하여 커서를 생성합니다.
+ * - offset pagination에서 발생하는
+ *   데이터 누락 및 중복 노출 문제를 방지합니다.
  */
 export const CursorSchema = Type.Object(
   {
@@ -85,9 +137,13 @@ export const CursorSchema = Type.Object(
 );
 
 /**
- * [GET /posts] 목록 조회 및 검색 필터링
- * 물리적 삭제 환경에서는 '삭제된 데이터'를 거를 필요가 없으므로 쿼리가 단순화되나,
- * 랭킹 산정 시 존재하지 않는 게시글의 ID가 포함되지 않도록 인덱스 관리가 중요합니다.
+ * [GET /posts]
+ * 게시글 목록 조회 Query
+ *
+ * 기능
+ * - 다양한 검색 및 필터링 조건 제공
+ * - 정렬 정책 선택 가능
+ * - Keyset 기반 페이지네이션 지원
  */
 export const PostListQuerySchema = Type.Object(
   {
@@ -99,7 +155,7 @@ export const PostListQuerySchema = Type.Object(
     // --- 검색 조건 ---
     keyword: Type.Optional(Type.String({ minLength: 1 })),
     /** true: 제목 검색 / false: 제목+본문 통합 검색 */
-    titleOnly: Type.Optional(booleanSchema),
+    titleOnly: Type.Optional(Type.Boolean()),
 
     // --- 수치/범위 필터 ---
     minViewCount: Type.Optional(Type.Integer({ minimum: 0 })),
@@ -135,40 +191,38 @@ export const PostListQuerySchema = Type.Object(
 );
 export type PostListQueryDto = Static<typeof PostListQuerySchema>;
 
-// ----------------------------------------------------------------
-// Response DTO: 클라이언트로 전달되는 최종 데이터 정의
-// ----------------------------------------------------------------
-
-/** 전체 게시글 수 응답 (물리적 삭제 반영된 실시간 카운트) */
-export const PostCountResponseSchema = Type.Object(
-  {
-    count: Type.Integer(),
-  },
-  { $id: 'PostCountResponse', additionalProperties: false },
-);
-export type PostCountResponseDto = Static<typeof PostCountResponseSchema>;
-
-/** 작성자 프로필 요약 (User-Profile 조인 결과) */
+/**
+ * 게시글 작성자 요약 정보
+ * (User + Profile 조인 결과)
+ */
 export const PostAuthorSchema = Type.Object(
   {
     id: Type.Integer(),
-    name: Type.String(),
+    name: Type.Union([Type.String(), Type.Null()]),
   },
   { $id: 'PostAuthor', additionalProperties: false },
 );
 
+/**
+ * 게시글 수정 응답 DTO
+ *
+ * 수정 이후 최소한의 상태 정보만 반환합니다.
+ */
 export const PostUpdateResponseSchema = Type.Object(
   {
     id: Type.Integer(),
     authorId: Type.Integer(),
     published: Type.Optional(Type.Boolean()),
-    updatedAt: Type.Optional(Type.String({ format: 'date-time' })),
+    publishedAt: Type.Union([Type.String({ format: 'date-time' }), Type.Null()]),
+    updatedAt: Type.String({ format: 'date-time' }),
   },
   { $id: 'PostUpdateResponse', additionalProperties: false },
 );
 export type PostUpdateResponseDto = Static<typeof PostUpdateResponseSchema>;
 
-/** 게시글 상세 응답 (단건 조회용) */
+/**
+ * 게시글 상세 조회 응답 DTO
+ */
 export const PostResponseSchema = Type.Object(
   {
     id: Type.Integer(),
@@ -187,7 +241,12 @@ export const PostResponseSchema = Type.Object(
 );
 export type PostResponseDto = Static<typeof PostResponseSchema>;
 
-/** 목록 조회를 위한 경량 스키마 (본문 등 무거운 필드 제외) */
+/**
+ * 목록 조회 결과용 경량 DTO
+ *
+ * - content 등 무거운 필드는 제외
+ * - 리스트 페이지 최적화 목적
+ */
 export const PostListItemSchema = Type.Pick(PostResponseSchema, [
   'id',
   'title',
@@ -198,8 +257,11 @@ export const PostListItemSchema = Type.Pick(PostResponseSchema, [
   'likeCount',
   'replyCount',
 ]);
+export type PostListItemDto = Static<typeof PostListItemSchema>;
 
-/** 목록 조회의 최종 결과물 및 다음 페이지 정보 */
+/**
+ * 게시글 목록 조회 응답
+ */
 export const PostListResponseSchema = Type.Object(
   {
     posts: Type.Array(PostListItemSchema),

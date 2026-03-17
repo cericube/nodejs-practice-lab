@@ -211,7 +211,7 @@ describe('UserService 응답은 DTO 포맷 구조로 반환한다.', () => {
     expect(users.data[0]).toHaveProperty('displayName');
     expect(users.data[0]).toHaveProperty('createdAt');
     expect(users.data[0]).toHaveProperty('updatedAt');
-    //TODO meta가 없어야 한다.
+    //meta가 없어야 한다.
   });
 
   it('6. 페이지 있는 사용자목록 조회시 data + meta정보를 반환한다.', async () => {

@@ -15,8 +15,10 @@ import type { FastifyInstance } from 'fastify';
  */
 
 import { userRoutes } from './modules/user/user.route';
+import { postRoutes } from './modules/post/post.route';
 
 export async function routes(app: FastifyInstance) {
   // API v1 (원하면 /api/v1로 한번 더 감싸도 됨)
   await app.register(userRoutes, { prefix: '/users' });
+  await app.register(postRoutes, { prefix: '/posts' });
 }

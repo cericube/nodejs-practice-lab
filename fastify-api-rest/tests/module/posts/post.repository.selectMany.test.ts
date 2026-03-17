@@ -497,7 +497,7 @@ describe('PostRepository.selectMany: keyset 테스트', () => {
     });
   });
 
-  it('oldest 정렬에서 cursor.id를 기준으로 다음 페이지를 조회하면 cursor.id보다 큰 id 데이터만 반환된다.', async () => {
+  it('2.oldest 정렬에서 cursor.id를 기준으로 다음 페이지를 조회하면 cursor.id보다 큰 id 데이터만 반환된다.', async () => {
     const take = 5;
     const first = await repo.selectMany({
       page: {

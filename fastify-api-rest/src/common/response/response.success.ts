@@ -8,8 +8,8 @@ import { Type, type TSchema } from '@sinclair/typebox';
  * - 검증: additionalProperties: false 설정을 통해 정의되지 않은 필드가 노출되는 것을 방지합니다.
  * * @param dataSchema - body 필드에 들어갈 데이터 구조 (DTO 스키마)
  */
-export const SuccessResponseSchema = <T extends TSchema>(dataSchema: T) =>
-  Type.Object(
+export function SuccessResponseSchema<T extends TSchema>(dataSchema: T) {
+  return Type.Object(
     {
       success: Type.Literal(true), // 응답 성공 시 항상 true 값 고정
       body: dataSchema, // 실제 비즈니스 데이터가 담기는 공간
@@ -18,6 +18,7 @@ export const SuccessResponseSchema = <T extends TSchema>(dataSchema: T) =>
       additionalProperties: false, // 스키마 외 데이터 유출 방지 (보안/최적화)
     },
   );
+}
 
 /**
  * [SuccessResponseDto]

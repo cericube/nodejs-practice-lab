@@ -38,7 +38,7 @@ export async function seedPosts(users: { id: number }[], option: SeedPostOption 
 
   for (let i = 0; i < count; i++) {
     const user = users[i % users.length];
-    const createdAt = new Date(baseTime - i * ONE_HOUR);
+    const createdAt = new Date(baseTime + i * ONE_HOUR);
 
     const published = Math.random() < publishedRatio;
     const saltTitle = Math.random() < publishedRatio ? '수학' : '국어';

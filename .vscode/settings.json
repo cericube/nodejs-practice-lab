@@ -50,7 +50,7 @@
   // "node_modules/typescript/lib" 로 경로를 지정하면,
   // 해당 프로젝트에 설치된 TypeScript 버전이 VSCode에서도 사용됨.
   // ===============================================================
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
 
   // ===============================================================
   // 4) 파일 탐색기 & 검색에서 불필요 폴더 제외
@@ -127,6 +127,37 @@
   //
   // 대규모 프로젝트에서 매우 유용하며, 경로 오류 예방에 효과적.
   // ===============================================================
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "javascript.updateImportsOnFileMove.enabled": "always"
+  "js/ts.updateImportsOnFileMove.enabled": "always",
+
+  // TodoTree Extension 설정
+  "todo-tree.highlights.customHighlight": {
+    "TODO": {
+      // 작업예정
+      "foreground": "#ffffff",
+      "background": "#C79200",
+      "icon": "check",
+      "type": "tag"
+    },
+    "FIXME": {
+      // 버그
+      "foreground": "#ffffff",
+      "background": "#E53935",
+      "icon": "flame",
+      "type": "tag"
+    },
+    "HACK": {
+      // 임시 코드
+      "foreground": "#ffffff",
+      "background": "#7E57C2",
+      "icon": "tools",
+      "type": "tag"
+    },
+    "NOTE": {
+      // 참고
+      "foreground": "#ffffff",
+      "background": "#1E88E5",
+      "icon": "note",
+      "type": "tag"
+    }
+  }
 }
