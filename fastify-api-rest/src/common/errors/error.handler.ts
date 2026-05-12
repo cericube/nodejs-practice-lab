@@ -2,7 +2,7 @@
 
 import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import { ErrorCode } from './error.codes';
-import { BusinessError } from './busuness.error';
+import { BusinessError } from './business.error';
 import { env } from '../../config/env';
 import { Prisma } from '../../generated/client';
 

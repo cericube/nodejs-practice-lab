@@ -1,3 +1,5 @@
+// tests/module/post/post.repository.selectMany.test.ts
+
 import { describe, it, expect, beforeAll, beforeEach, afterEach, afterAll } from 'vitest';
 import { PostRepository } from '../../../src/modules/post/post.repository';
 import { prisma } from '../setup';

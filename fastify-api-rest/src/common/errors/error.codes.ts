@@ -25,6 +25,7 @@ export enum ErrorCode {
   // =========================
   NOT_FOUND = 'NOT_FOUND', // 요청한 리소스를 찾을 수 없음
   ALREADY_EXISTS = 'ALREADY_EXISTS', // 이미 존재하는 리소스
+  FILE_COUNT_EXCEEDED = 'FILE_COUNT_EXCEEDED', // 허용된 첨부 파일 개수 초과
 
   // =========================
   // DATABASE (Prisma / Persistence)

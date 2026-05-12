@@ -149,7 +149,7 @@ export class PostRepository {
   }
 
   /**
-   * 조회수·좋아요·댓글 수 등 카운터를 원자적으로 증감합니다.
+   * 공개글에 한해서 조회수·좋아요·댓글 수 등 카운터를 원자적으로 증감합니다.
    *
    * Prisma의 `increment` 연산을 사용하므로 애플리케이션에서 현재 값을 먼저 조회할
    * 필요가 없고, 동시 요청이 많더라도 DB 레벨에서 레이스 컨디션 없이 처리됩니다.
@@ -168,7 +168,10 @@ export class PostRepository {
     replyCount?: number;
   }) {
     return this.prisma.post.update({
-      where: { id: data.postId },
+      where: {
+        id: data.postId,
+        published: true,
+      },
       data: {
         ...(data.viewCount !== undefined && {
           viewCount: { increment: data.viewCount },

@@ -48,10 +48,9 @@ export const postRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   // Fastify에서 POST API 라우트를 정의하는 코드
 
   /**
-   * @route    POST /api/posts
-   * @desc     새로운 게시글 생성
+   * POST /api/posts
+   * 새로운 게시글 생성
    *
-   * @validate
    * - 요청: PostCreateBodySchema를 통해 게시글 생성에 필요한 필드 검증
    * - 응답: 생성된 게시글 정보를 PostUpdateBodySchema 규격으로 반환
    */
@@ -71,10 +70,9 @@ export const postRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * @route    PATCH /api/posts/:id
-   * @desc     게시글 내용 수정
+   * PATCH /api/posts/:id
+   * 게시글 내용 수정
    *
-   * @validate
    * - 요청:
    *   - Params: 게시글 식별자(id) 형식 검증
    *   - Body: 수정 가능한 필드(PostUpdateBodySchema)만 허용
@@ -100,10 +98,9 @@ export const postRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * @route    PATCH /api/posts/:id
-   * @desc     게시글 카운터 업데이트 (조회수, 좋아요 등)
+   * PATCH /api/posts/:id
+   * 게시글 카운터 업데이트 (조회수, 좋아요 등)
    *
-   * @validate
    * - 요청:
    *   - Params: 대상 게시글 ID 검증
    *   - Body: 카운터 증가/감소 요청(PostUpdateCounterBodySchema)
@@ -128,10 +125,9 @@ export const postRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * @route    DELETE /api/posts/:id
-   * @desc     게시글 삭제
+   * DELETE /api/posts/:id
+   * 게시글 삭제
    *
-   * @validate
    * - 요청:
    *   - Params: 삭제 대상 게시글 ID 검증
    *   - Body: 삭제 요청 검증(PostUpdateBodySchema)
@@ -157,10 +153,9 @@ export const postRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * @route    GET /api/posts?title=test
-   * @desc     게시글 단건 조회 (조건 기반)
+   * GET /api/posts?title=test
+   * 게시글 단건 조회 (조건 기반)
    *
-   * @validate
    * - 요청:
    *   - Querystring: PostQuerySchema를 통해 검색 조건 검증
    *
@@ -183,10 +178,9 @@ export const postRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * @route    POST /api/posts/list
-   * @desc     게시글 목록 조회 및 페이징 처리
+   * POST /api/posts/list
+   * 게시글 목록 조회 및 페이징 처리
    *
-   * @validate
    * - 요청:
    *   - body: 페이지 번호, 페이지 크기, 검색 조건 검증
    *

@@ -28,17 +28,11 @@ export type AggregateProfile = {
 
 export type ProfileAvgAggregateOutputType = {
   id: number | null
-  avatarFileSize: number | null
-  avatarWidth: number | null
-  avatarHeight: number | null
   userId: number | null
 }
 
 export type ProfileSumAggregateOutputType = {
   id: number | null
-  avatarFileSize: number | null
-  avatarWidth: number | null
-  avatarHeight: number | null
   userId: number | null
 }
 
@@ -50,10 +44,6 @@ export type ProfileMinAggregateOutputType = {
   bio: string | null
   avatarKey: string | null
   avatarFileName: string | null
-  avatarMimeType: string | null
-  avatarFileSize: number | null
-  avatarWidth: number | null
-  avatarHeight: number | null
   userId: number | null
 }
 
@@ -65,10 +55,6 @@ export type ProfileMaxAggregateOutputType = {
   bio: string | null
   avatarKey: string | null
   avatarFileName: string | null
-  avatarMimeType: string | null
-  avatarFileSize: number | null
-  avatarWidth: number | null
-  avatarHeight: number | null
   userId: number | null
 }
 
@@ -80,10 +66,6 @@ export type ProfileCountAggregateOutputType = {
   bio: number
   avatarKey: number
   avatarFileName: number
-  avatarMimeType: number
-  avatarFileSize: number
-  avatarWidth: number
-  avatarHeight: number
   userId: number
   _all: number
 }
@@ -91,17 +73,11 @@ export type ProfileCountAggregateOutputType = {
 
 export type ProfileAvgAggregateInputType = {
   id?: true
-  avatarFileSize?: true
-  avatarWidth?: true
-  avatarHeight?: true
   userId?: true
 }
 
 export type ProfileSumAggregateInputType = {
   id?: true
-  avatarFileSize?: true
-  avatarWidth?: true
-  avatarHeight?: true
   userId?: true
 }
 
@@ -113,10 +89,6 @@ export type ProfileMinAggregateInputType = {
   bio?: true
   avatarKey?: true
   avatarFileName?: true
-  avatarMimeType?: true
-  avatarFileSize?: true
-  avatarWidth?: true
-  avatarHeight?: true
   userId?: true
 }
 
@@ -128,10 +100,6 @@ export type ProfileMaxAggregateInputType = {
   bio?: true
   avatarKey?: true
   avatarFileName?: true
-  avatarMimeType?: true
-  avatarFileSize?: true
-  avatarWidth?: true
-  avatarHeight?: true
   userId?: true
 }
 
@@ -143,10 +111,6 @@ export type ProfileCountAggregateInputType = {
   bio?: true
   avatarKey?: true
   avatarFileName?: true
-  avatarMimeType?: true
-  avatarFileSize?: true
-  avatarWidth?: true
-  avatarHeight?: true
   userId?: true
   _all?: true
 }
@@ -245,10 +209,6 @@ export type ProfileGroupByOutputType = {
   bio: string | null
   avatarKey: string | null
   avatarFileName: string | null
-  avatarMimeType: string | null
-  avatarFileSize: number | null
-  avatarWidth: number | null
-  avatarHeight: number | null
   userId: number
   _count: ProfileCountAggregateOutputType | null
   _avg: ProfileAvgAggregateOutputType | null
@@ -283,10 +243,6 @@ export type ProfileWhereInput = {
   bio?: Prisma.StringNullableFilter<"Profile"> | string | null
   avatarKey?: Prisma.StringNullableFilter<"Profile"> | string | null
   avatarFileName?: Prisma.StringNullableFilter<"Profile"> | string | null
-  avatarMimeType?: Prisma.StringNullableFilter<"Profile"> | string | null
-  avatarFileSize?: Prisma.IntNullableFilter<"Profile"> | number | null
-  avatarWidth?: Prisma.IntNullableFilter<"Profile"> | number | null
-  avatarHeight?: Prisma.IntNullableFilter<"Profile"> | number | null
   userId?: Prisma.IntFilter<"Profile"> | number
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
@@ -299,10 +255,6 @@ export type ProfileOrderByWithRelationInput = {
   bio?: Prisma.SortOrderInput | Prisma.SortOrder
   avatarKey?: Prisma.SortOrderInput | Prisma.SortOrder
   avatarFileName?: Prisma.SortOrderInput | Prisma.SortOrder
-  avatarMimeType?: Prisma.SortOrderInput | Prisma.SortOrder
-  avatarFileSize?: Prisma.SortOrderInput | Prisma.SortOrder
-  avatarWidth?: Prisma.SortOrderInput | Prisma.SortOrder
-  avatarHeight?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
@@ -319,10 +271,6 @@ export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   bio?: Prisma.StringNullableFilter<"Profile"> | string | null
   avatarKey?: Prisma.StringNullableFilter<"Profile"> | string | null
   avatarFileName?: Prisma.StringNullableFilter<"Profile"> | string | null
-  avatarMimeType?: Prisma.StringNullableFilter<"Profile"> | string | null
-  avatarFileSize?: Prisma.IntNullableFilter<"Profile"> | number | null
-  avatarWidth?: Prisma.IntNullableFilter<"Profile"> | number | null
-  avatarHeight?: Prisma.IntNullableFilter<"Profile"> | number | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id" | "userId">
 
@@ -334,10 +282,6 @@ export type ProfileOrderByWithAggregationInput = {
   bio?: Prisma.SortOrderInput | Prisma.SortOrder
   avatarKey?: Prisma.SortOrderInput | Prisma.SortOrder
   avatarFileName?: Prisma.SortOrderInput | Prisma.SortOrder
-  avatarMimeType?: Prisma.SortOrderInput | Prisma.SortOrder
-  avatarFileSize?: Prisma.SortOrderInput | Prisma.SortOrder
-  avatarWidth?: Prisma.SortOrderInput | Prisma.SortOrder
-  avatarHeight?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   _count?: Prisma.ProfileCountOrderByAggregateInput
   _avg?: Prisma.ProfileAvgOrderByAggregateInput
@@ -357,10 +301,6 @@ export type ProfileScalarWhereWithAggregatesInput = {
   bio?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
   avatarKey?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
   avatarFileName?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
-  avatarMimeType?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
-  avatarFileSize?: Prisma.IntNullableWithAggregatesFilter<"Profile"> | number | null
-  avatarWidth?: Prisma.IntNullableWithAggregatesFilter<"Profile"> | number | null
-  avatarHeight?: Prisma.IntNullableWithAggregatesFilter<"Profile"> | number | null
   userId?: Prisma.IntWithAggregatesFilter<"Profile"> | number
 }
 
@@ -371,10 +311,6 @@ export type ProfileCreateInput = {
   bio?: string | null
   avatarKey?: string | null
   avatarFileName?: string | null
-  avatarMimeType?: string | null
-  avatarFileSize?: number | null
-  avatarWidth?: number | null
-  avatarHeight?: number | null
   user: Prisma.UserCreateNestedOneWithoutProfileInput
 }
 
@@ -386,10 +322,6 @@ export type ProfileUncheckedCreateInput = {
   bio?: string | null
   avatarKey?: string | null
   avatarFileName?: string | null
-  avatarMimeType?: string | null
-  avatarFileSize?: number | null
-  avatarWidth?: number | null
-  avatarHeight?: number | null
   userId: number
 }
 
@@ -400,10 +332,6 @@ export type ProfileUpdateInput = {
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarFileSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  avatarWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  avatarHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
 }
 
@@ -415,10 +343,6 @@ export type ProfileUncheckedUpdateInput = {
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarFileSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  avatarWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  avatarHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -430,10 +354,6 @@ export type ProfileCreateManyInput = {
   bio?: string | null
   avatarKey?: string | null
   avatarFileName?: string | null
-  avatarMimeType?: string | null
-  avatarFileSize?: number | null
-  avatarWidth?: number | null
-  avatarHeight?: number | null
   userId: number
 }
 
@@ -444,10 +364,6 @@ export type ProfileUpdateManyMutationInput = {
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarFileSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  avatarWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  avatarHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ProfileUncheckedUpdateManyInput = {
@@ -458,10 +374,6 @@ export type ProfileUncheckedUpdateManyInput = {
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarFileSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  avatarWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  avatarHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -478,18 +390,11 @@ export type ProfileCountOrderByAggregateInput = {
   bio?: Prisma.SortOrder
   avatarKey?: Prisma.SortOrder
   avatarFileName?: Prisma.SortOrder
-  avatarMimeType?: Prisma.SortOrder
-  avatarFileSize?: Prisma.SortOrder
-  avatarWidth?: Prisma.SortOrder
-  avatarHeight?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type ProfileAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  avatarFileSize?: Prisma.SortOrder
-  avatarWidth?: Prisma.SortOrder
-  avatarHeight?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -501,10 +406,6 @@ export type ProfileMaxOrderByAggregateInput = {
   bio?: Prisma.SortOrder
   avatarKey?: Prisma.SortOrder
   avatarFileName?: Prisma.SortOrder
-  avatarMimeType?: Prisma.SortOrder
-  avatarFileSize?: Prisma.SortOrder
-  avatarWidth?: Prisma.SortOrder
-  avatarHeight?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -516,18 +417,11 @@ export type ProfileMinOrderByAggregateInput = {
   bio?: Prisma.SortOrder
   avatarKey?: Prisma.SortOrder
   avatarFileName?: Prisma.SortOrder
-  avatarMimeType?: Prisma.SortOrder
-  avatarFileSize?: Prisma.SortOrder
-  avatarWidth?: Prisma.SortOrder
-  avatarHeight?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type ProfileSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  avatarFileSize?: Prisma.SortOrder
-  avatarWidth?: Prisma.SortOrder
-  avatarHeight?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -563,14 +457,6 @@ export type ProfileUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProfileUpdateToOneWithWhereWithoutUserInput, Prisma.ProfileUpdateWithoutUserInput>, Prisma.ProfileUncheckedUpdateWithoutUserInput>
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type ProfileCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -578,10 +464,6 @@ export type ProfileCreateWithoutUserInput = {
   bio?: string | null
   avatarKey?: string | null
   avatarFileName?: string | null
-  avatarMimeType?: string | null
-  avatarFileSize?: number | null
-  avatarWidth?: number | null
-  avatarHeight?: number | null
 }
 
 export type ProfileUncheckedCreateWithoutUserInput = {
@@ -592,10 +474,6 @@ export type ProfileUncheckedCreateWithoutUserInput = {
   bio?: string | null
   avatarKey?: string | null
   avatarFileName?: string | null
-  avatarMimeType?: string | null
-  avatarFileSize?: number | null
-  avatarWidth?: number | null
-  avatarHeight?: number | null
 }
 
 export type ProfileCreateOrConnectWithoutUserInput = {
@@ -621,10 +499,6 @@ export type ProfileUpdateWithoutUserInput = {
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarFileSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  avatarWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  avatarHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ProfileUncheckedUpdateWithoutUserInput = {
@@ -635,10 +509,6 @@ export type ProfileUncheckedUpdateWithoutUserInput = {
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarFileName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarMimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  avatarFileSize?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  avatarWidth?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  avatarHeight?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 
@@ -651,10 +521,6 @@ export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   bio?: boolean
   avatarKey?: boolean
   avatarFileName?: boolean
-  avatarMimeType?: boolean
-  avatarFileSize?: boolean
-  avatarWidth?: boolean
-  avatarHeight?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["profile"]>
@@ -667,10 +533,6 @@ export type ProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   bio?: boolean
   avatarKey?: boolean
   avatarFileName?: boolean
-  avatarMimeType?: boolean
-  avatarFileSize?: boolean
-  avatarWidth?: boolean
-  avatarHeight?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["profile"]>
@@ -683,10 +545,6 @@ export type ProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   bio?: boolean
   avatarKey?: boolean
   avatarFileName?: boolean
-  avatarMimeType?: boolean
-  avatarFileSize?: boolean
-  avatarWidth?: boolean
-  avatarHeight?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["profile"]>
@@ -699,14 +557,10 @@ export type ProfileSelectScalar = {
   bio?: boolean
   avatarKey?: boolean
   avatarFileName?: boolean
-  avatarMimeType?: boolean
-  avatarFileSize?: boolean
-  avatarWidth?: boolean
-  avatarHeight?: boolean
   userId?: boolean
 }
 
-export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "deletedAt" | "bio" | "avatarKey" | "avatarFileName" | "avatarMimeType" | "avatarFileSize" | "avatarWidth" | "avatarHeight" | "userId", ExtArgs["result"]["profile"]>
+export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "deletedAt" | "bio" | "avatarKey" | "avatarFileName" | "userId", ExtArgs["result"]["profile"]>
 export type ProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -730,10 +584,6 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     bio: string | null
     avatarKey: string | null
     avatarFileName: string | null
-    avatarMimeType: string | null
-    avatarFileSize: number | null
-    avatarWidth: number | null
-    avatarHeight: number | null
     userId: number
   }, ExtArgs["result"]["profile"]>
   composites: {}
@@ -1166,10 +1016,6 @@ export interface ProfileFieldRefs {
   readonly bio: Prisma.FieldRef<"Profile", 'String'>
   readonly avatarKey: Prisma.FieldRef<"Profile", 'String'>
   readonly avatarFileName: Prisma.FieldRef<"Profile", 'String'>
-  readonly avatarMimeType: Prisma.FieldRef<"Profile", 'String'>
-  readonly avatarFileSize: Prisma.FieldRef<"Profile", 'Int'>
-  readonly avatarWidth: Prisma.FieldRef<"Profile", 'Int'>
-  readonly avatarHeight: Prisma.FieldRef<"Profile", 'Int'>
   readonly userId: Prisma.FieldRef<"Profile", 'Int'>
 }
     

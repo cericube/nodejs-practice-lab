@@ -132,6 +132,7 @@ describe('PostService : 기본 CRUD', () => {
     const post = await service.createPost({
       title: '타이틀',
       authorId: authorId,
+      published: true, // 공개글 이어야지 count를 증가 시킬 수 있다.
     });
 
     const updated = await service.updateCounter(
@@ -142,7 +143,6 @@ describe('PostService : 기본 CRUD', () => {
         likeCount: 3, //3 만큼 증가 시킨다.
       },
     );
-
     expect(updated).toHaveProperty('id', post.id);
   });
   //
@@ -179,6 +179,13 @@ describe('PostService : 기본 CRUD', () => {
       title: '타이틀',
       authorId: authorId,
       content: ' 내용입니다......................',
+      published: true,
+    });
+
+    //여기서 viewCount 가 void로 1 증가해야 한다.
+    const checkView = await service.getPost({
+      id: post.id,
+      includeDraft: true,
     });
 
     const detailPost = await service.getPost({
@@ -186,13 +193,13 @@ describe('PostService : 기본 CRUD', () => {
       includeDraft: true,
     });
 
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-    console.log(detailPost);
+    // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+    // console.log(detailPost);
 
     expect(detailPost).toHaveProperty('id', post.id);
     expect(detailPost).toHaveProperty('title', '타이틀');
     expect(detailPost).toHaveProperty('content');
-    expect(detailPost).toHaveProperty('published', false);
+    expect(detailPost).toHaveProperty('published', true);
     expect(detailPost).toHaveProperty('author');
     expect(detailPost.author).toHaveProperty('id');
     expect(detailPost.author).toHaveProperty('name');
@@ -200,8 +207,7 @@ describe('PostService : 기본 CRUD', () => {
     expect(detailPost).toHaveProperty('createdAt');
     expect(typeof detailPost.createdAt).toBe('string');
     expect(detailPost).toHaveProperty('updatedAt');
-    expect(detailPost).toHaveProperty('published', false);
-    expect(detailPost).toHaveProperty('viewCount');
+    expect(detailPost).toHaveProperty('viewCount', 2); //조회수 검증
     expect(detailPost).toHaveProperty('likeCount');
     expect(detailPost).toHaveProperty('replyCount');
   });

@@ -1,3 +1,5 @@
+// tests/module/post/post.repository.test.ts
+
 import { describe, it, expect, beforeAll, beforeEach, afterEach, afterAll } from 'vitest';
 import { PostRepository } from '../../../src/modules/post/post.repository';
 import { prisma } from '../setup';
@@ -215,9 +217,14 @@ describe('PostRepository.update/updateCounters', () => {
     }
   });
 
-  it('5. 조회수, 좋아요, 댓글 수 를 각 각 증가후 결과를 확인한다.', async () => {
-    const result = await repo.updateCounters({
+  it('5. 공개글 조회수, 좋아요, 댓글 수 를 각 각 증가후 결과를 확인한다.', async () => {
+    const updated = await repo.update({
       postId,
+      published: true,
+    });
+
+    const result = await repo.updateCounters({
+      postId: postId,
       viewCount: 4,
       likeCount: 6,
       replyCount: 10,

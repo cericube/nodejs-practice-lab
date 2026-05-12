@@ -1,3 +1,5 @@
+// tests/module/post/post.route.test.ts
+
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 
@@ -200,6 +202,15 @@ describe('PostRoute 테스트(CRUD) ', () => {
     // 글 등록
     const created = await getCreatedPost(postAuthorId);
 
+    // 공개글만 count 하니까 공개로 전환해야 한다.
+    const updated = await app.inject({
+      method: 'PATCH',
+      url: `/api/posts/${created.id}`,
+      payload: {
+        published: true,
+      },
+    });
+
     // 첫번째 갱신
     const counted1 = await app.inject({
       method: 'PATCH',
@@ -228,17 +239,16 @@ describe('PostRoute 테스트(CRUD) ', () => {
     expect(json.body).toHaveProperty('id');
 
     // 결과 확인
+    // 조회시 viewCount +1 갱신된다.
     const post = await app.inject({
       method: 'GET',
       url: `/api/posts?id=${json.body.id}&includeDraft=true`, //미공개도 포함해야 오류 아남
     });
     expect(post.statusCode).toBe(200);
     const postJson = post.json();
-    // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-    // console.log(postJson);
     expect(postJson).toHaveProperty('success', true);
     expect(postJson).toHaveProperty('body');
-    expect(postJson.body).toHaveProperty('viewCount', 102); //100 + 2
+    expect(postJson.body).toHaveProperty('viewCount', 103); //100 + 2 , +1(조회시)
     expect(postJson.body).toHaveProperty('likeCount', 35); //39 + -4
     expect(postJson.body).toHaveProperty('replyCount', 17); // 10 + 7
   });
@@ -360,7 +370,7 @@ describe('PostRoute 다중조회', () => {
   });
 
   // 검색 조건이 많아서 post 를 사용한다.
-  it.only('1.글 목록 조회시, 성공 응답 객체를 반환한다.', async () => {
+  it('1.글 목록 조회시, 성공 응답 객체를 반환한다.', async () => {
     const take = 5;
 
     const result = await app.inject({

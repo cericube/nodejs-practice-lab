@@ -2,6 +2,7 @@
 import Fastify from 'fastify';
 import type { FastifyInstance } from 'fastify';
 import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import multipart from '@fastify/multipart';
 
 import { env } from './config/env';
 import { errorHandler } from './common/errors/error.handler';
@@ -9,7 +10,7 @@ import { errorHandler } from './common/errors/error.handler';
 import { prismaPlugin } from './plugins/prisma.plugin';
 import { routes } from './route';
 import { ErrorCode } from './common/errors/error.codes';
-import { BusinessError } from './common/errors/busuness.error';
+import { BusinessError } from './common/errors/business.error';
 
 // ================================
 // Fastify Application Factory
@@ -112,6 +113,18 @@ export const createApp = async () => {
   // fastify.decorate('prisma', prisma) 같은 방식으로
   // request / app 인스턴스에 의존성 주입
   await app.register(prismaPlugin);
+
+  // 파일 업로드 처리 플러그인
+  // - multipart/form-data 요청 처리
+  // - limits 옵션으로 업로드 크기 제한 (10MB)
+  // - 실제 파일 저장은 스토리지로 처리하고, DB에는 메타데이터만 저장하는 방식 권장
+
+  await app.register(multipart, {
+    limits: {
+      files: env.UPLOAD_MAX_FILES, // 최대 파일 개수
+      fileSize: env.UPLOAD_MAX_FILE_SIZE, // 10 * 1024 * 1024, // 10MB
+    },
+  });
 
   // --------------------------------
   // 4. Global Error Policy

@@ -40,24 +40,18 @@ export type PostLikeMinAggregateOutputType = {
   userId: number | null
   postId: number | null
   createdAt: Date | null
-  updatedAt: Date | null
-  deletedAt: Date | null
 }
 
 export type PostLikeMaxAggregateOutputType = {
   userId: number | null
   postId: number | null
   createdAt: Date | null
-  updatedAt: Date | null
-  deletedAt: Date | null
 }
 
 export type PostLikeCountAggregateOutputType = {
   userId: number
   postId: number
   createdAt: number
-  updatedAt: number
-  deletedAt: number
   _all: number
 }
 
@@ -76,24 +70,18 @@ export type PostLikeMinAggregateInputType = {
   userId?: true
   postId?: true
   createdAt?: true
-  updatedAt?: true
-  deletedAt?: true
 }
 
 export type PostLikeMaxAggregateInputType = {
   userId?: true
   postId?: true
   createdAt?: true
-  updatedAt?: true
-  deletedAt?: true
 }
 
 export type PostLikeCountAggregateInputType = {
   userId?: true
   postId?: true
   createdAt?: true
-  updatedAt?: true
-  deletedAt?: true
   _all?: true
 }
 
@@ -187,8 +175,6 @@ export type PostLikeGroupByOutputType = {
   userId: number
   postId: number
   createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
   _count: PostLikeCountAggregateOutputType | null
   _avg: PostLikeAvgAggregateOutputType | null
   _sum: PostLikeSumAggregateOutputType | null
@@ -218,8 +204,6 @@ export type PostLikeWhereInput = {
   userId?: Prisma.IntFilter<"PostLike"> | number
   postId?: Prisma.IntFilter<"PostLike"> | number
   createdAt?: Prisma.DateTimeFilter<"PostLike"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"PostLike"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"PostLike"> | Date | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   post?: Prisma.XOR<Prisma.PostScalarRelationFilter, Prisma.PostWhereInput>
 }
@@ -228,8 +212,6 @@ export type PostLikeOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   post?: Prisma.PostOrderByWithRelationInput
 }
@@ -242,8 +224,6 @@ export type PostLikeWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.IntFilter<"PostLike"> | number
   postId?: Prisma.IntFilter<"PostLike"> | number
   createdAt?: Prisma.DateTimeFilter<"PostLike"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"PostLike"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"PostLike"> | Date | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   post?: Prisma.XOR<Prisma.PostScalarRelationFilter, Prisma.PostWhereInput>
 }, "userId_postId">
@@ -252,8 +232,6 @@ export type PostLikeOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.PostLikeCountOrderByAggregateInput
   _avg?: Prisma.PostLikeAvgOrderByAggregateInput
   _max?: Prisma.PostLikeMaxOrderByAggregateInput
@@ -268,14 +246,10 @@ export type PostLikeScalarWhereWithAggregatesInput = {
   userId?: Prisma.IntWithAggregatesFilter<"PostLike"> | number
   postId?: Prisma.IntWithAggregatesFilter<"PostLike"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PostLike"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PostLike"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PostLike"> | Date | string | null
 }
 
 export type PostLikeCreateInput = {
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutLikesInput
   post: Prisma.PostCreateNestedOneWithoutLikesInput
 }
@@ -284,14 +258,10 @@ export type PostLikeUncheckedCreateInput = {
   userId: number
   postId: number
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
 }
 
 export type PostLikeUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutLikesNestedInput
   post?: Prisma.PostUpdateOneRequiredWithoutLikesNestedInput
 }
@@ -300,30 +270,22 @@ export type PostLikeUncheckedUpdateInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   postId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PostLikeCreateManyInput = {
   userId: number
   postId: number
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
 }
 
 export type PostLikeUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PostLikeUncheckedUpdateManyInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   postId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PostLikeListRelationFilter = {
@@ -345,8 +307,6 @@ export type PostLikeCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
 }
 
 export type PostLikeAvgOrderByAggregateInput = {
@@ -358,16 +318,12 @@ export type PostLikeMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
 }
 
 export type PostLikeMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
 }
 
 export type PostLikeSumOrderByAggregateInput = {
@@ -461,16 +417,12 @@ export type PostLikeUncheckedUpdateManyWithoutPostNestedInput = {
 
 export type PostLikeCreateWithoutUserInput = {
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
   post: Prisma.PostCreateNestedOneWithoutLikesInput
 }
 
 export type PostLikeUncheckedCreateWithoutUserInput = {
   postId: number
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
 }
 
 export type PostLikeCreateOrConnectWithoutUserInput = {
@@ -506,22 +458,16 @@ export type PostLikeScalarWhereInput = {
   userId?: Prisma.IntFilter<"PostLike"> | number
   postId?: Prisma.IntFilter<"PostLike"> | number
   createdAt?: Prisma.DateTimeFilter<"PostLike"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"PostLike"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"PostLike"> | Date | string | null
 }
 
 export type PostLikeCreateWithoutPostInput = {
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutLikesInput
 }
 
 export type PostLikeUncheckedCreateWithoutPostInput = {
   userId: number
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
 }
 
 export type PostLikeCreateOrConnectWithoutPostInput = {
@@ -553,57 +499,41 @@ export type PostLikeUpdateManyWithWhereWithoutPostInput = {
 export type PostLikeCreateManyUserInput = {
   postId: number
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
 }
 
 export type PostLikeUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   post?: Prisma.PostUpdateOneRequiredWithoutLikesNestedInput
 }
 
 export type PostLikeUncheckedUpdateWithoutUserInput = {
   postId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PostLikeUncheckedUpdateManyWithoutUserInput = {
   postId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PostLikeCreateManyPostInput = {
   userId: number
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
 }
 
 export type PostLikeUpdateWithoutPostInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutLikesNestedInput
 }
 
 export type PostLikeUncheckedUpdateWithoutPostInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PostLikeUncheckedUpdateManyWithoutPostInput = {
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -612,8 +542,6 @@ export type PostLikeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   userId?: boolean
   postId?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
-  deletedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["postLike"]>
@@ -622,8 +550,6 @@ export type PostLikeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   userId?: boolean
   postId?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
-  deletedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["postLike"]>
@@ -632,8 +558,6 @@ export type PostLikeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   userId?: boolean
   postId?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
-  deletedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["postLike"]>
@@ -642,11 +566,9 @@ export type PostLikeSelectScalar = {
   userId?: boolean
   postId?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
-  deletedAt?: boolean
 }
 
-export type PostLikeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"userId" | "postId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["postLike"]>
+export type PostLikeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"userId" | "postId" | "createdAt", ExtArgs["result"]["postLike"]>
 export type PostLikeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
@@ -670,8 +592,6 @@ export type $PostLikePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     userId: number
     postId: number
     createdAt: Date
-    updatedAt: Date
-    deletedAt: Date | null
   }, ExtArgs["result"]["postLike"]>
   composites: {}
 }
@@ -1100,8 +1020,6 @@ export interface PostLikeFieldRefs {
   readonly userId: Prisma.FieldRef<"PostLike", 'Int'>
   readonly postId: Prisma.FieldRef<"PostLike", 'Int'>
   readonly createdAt: Prisma.FieldRef<"PostLike", 'DateTime'>
-  readonly updatedAt: Prisma.FieldRef<"PostLike", 'DateTime'>
-  readonly deletedAt: Prisma.FieldRef<"PostLike", 'DateTime'>
 }
     
 

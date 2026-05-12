@@ -185,7 +185,7 @@ export const PostListQuerySchema = Type.Object(
     // --- 페이지네이션 ---
     cursor: Type.Optional(CursorSchema),
     /** 페이지당 노출 개수 (기본값 설정 권장) */
-    take: Type.Optional(Type.Integer({ minimum: 1, maximum: 100, default: 10 })),
+    take: Type.Optional(Type.Integer({ minimum: 1, maximum: 100 })),
   },
   { $id: 'PostListQuery', additionalProperties: false },
 );

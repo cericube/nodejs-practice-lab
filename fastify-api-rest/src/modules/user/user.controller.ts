@@ -24,42 +24,42 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   /** 사용자를 생성하고 그 결과를 반환 (POST 대응) */
-  async createUser(data: UserCreateBodyDto): Promise<UserResponseDto> {
-    return await this.userService.createUser(data);
+  createUser(data: UserCreateBodyDto): Promise<UserResponseDto> {
+    return this.userService.createUser(data);
   }
 
   /** 사용자의 일부 정보를 수정 (PATCH 대응) */
-  async updateUser(userId: UserIdParamsDto, input: UserUpdateBodyDto): Promise<UserResponseDto> {
-    return await this.userService.updateUser(userId, input);
+  updateUser(userId: UserIdParamsDto, input: UserUpdateBodyDto): Promise<UserResponseDto> {
+    return this.userService.updateUser(userId, input);
   }
 
   /** 삭제(Soft-deleted)된 사용자를 다시 활성화 (PATCH restore 대응) */
-  async restoreUser(userId: UserIdParamsDto): Promise<UserResponseDto> {
-    return await this.userService.restoreUser(userId);
+  restoreUser(userId: UserIdParamsDto): Promise<UserResponseDto> {
+    return this.userService.restoreUser(userId);
   }
 
   /** 사용자를 시스템상에서 '삭제' 상태로 변경 (DELETE 대응) */
-  async softDeleteUser(userId: UserIdParamsDto): Promise<UserResponseDto> {
-    return await this.userService.softDeleteUser(userId);
+  softDeleteUser(userId: UserIdParamsDto): Promise<UserResponseDto> {
+    return this.userService.softDeleteUser(userId);
   }
 
   /** 검색 조건에 맞는 특정 사용자 정보를 가져옴 (GET 대응) */
-  async getUser(query: UserQueryDto): Promise<UserDetailResponseDto> {
-    return await this.userService.getUser(query);
+  getUser(query: UserQueryDto): Promise<UserDetailResponseDto> {
+    return this.userService.getUser(query);
   }
 
   /** 다수의 사용자 목록을 필터링하여 가져옴 (GET list 대응) */
-  async listUsers(query: UserListQueryDto): Promise<UserListResponseDto> {
-    return await this.userService.listUsers(query);
+  listUsers(query: UserListQueryDto): Promise<UserListResponseDto> {
+    return this.userService.listUsers(query);
   }
 
   /** 조건에 맞는 사용자가 데이터베이스에 있는지 확인 (GET exists 대응) */
-  async existsUser(where: UserQueryDto): Promise<UserExistsDto> {
-    return await this.userService.existsUser(where);
+  existsUser(where: UserQueryDto): Promise<UserExistsDto> {
+    return this.userService.existsUser(where);
   }
 
   /** 특정 조건의 사용자가 총 몇 명인지 계산 (GET count 대응) */
-  async countUser(query: UserCountQueryDto): Promise<UserCountDto> {
-    return await this.userService.countUser(query);
+  countUser(query: UserCountQueryDto): Promise<UserCountDto> {
+    return this.userService.countUser(query);
   }
 }

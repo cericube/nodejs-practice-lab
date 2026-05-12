@@ -98,10 +98,6 @@ export const ProfileScalarFieldEnum = {
   bio: 'bio',
   avatarKey: 'avatarKey',
   avatarFileName: 'avatarFileName',
-  avatarMimeType: 'avatarMimeType',
-  avatarFileSize: 'avatarFileSize',
-  avatarWidth: 'avatarWidth',
-  avatarHeight: 'avatarHeight',
   userId: 'userId'
 } as const
 
@@ -129,7 +125,6 @@ export const ReplyScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt',
   content: 'content',
   postId: 'postId',
   authorId: 'authorId'
@@ -141,9 +136,7 @@ export type ReplyScalarFieldEnum = (typeof ReplyScalarFieldEnum)[keyof typeof Re
 export const PostLikeScalarFieldEnum = {
   userId: 'userId',
   postId: 'postId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
+  createdAt: 'createdAt'
 } as const
 
 export type PostLikeScalarFieldEnum = (typeof PostLikeScalarFieldEnum)[keyof typeof PostLikeScalarFieldEnum]
@@ -152,15 +145,13 @@ export type PostLikeScalarFieldEnum = (typeof PostLikeScalarFieldEnum)[keyof typ
 export const PostFileScalarFieldEnum = {
   id: 'id',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt',
   fileKey: 'fileKey',
   fileName: 'fileName',
   contentType: 'contentType',
   fileSize: 'fileSize',
   downloadCount: 'downloadCount',
-  sortOrder: 'sortOrder',
-  postId: 'postId'
+  postId: 'postId',
+  userId: 'userId'
 } as const
 
 export type PostFileScalarFieldEnum = (typeof PostFileScalarFieldEnum)[keyof typeof PostFileScalarFieldEnum]

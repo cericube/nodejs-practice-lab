@@ -547,6 +547,11 @@ export type PostScalarRelationFilter = {
   isNot?: Prisma.PostWhereInput
 }
 
+export type PostNullableScalarRelationFilter = {
+  is?: Prisma.PostWhereInput | null
+  isNot?: Prisma.PostWhereInput | null
+}
+
 export type PostCreateNestedManyWithoutAuthorInput = {
   create?: Prisma.XOR<Prisma.PostCreateWithoutAuthorInput, Prisma.PostUncheckedCreateWithoutAuthorInput> | Prisma.PostCreateWithoutAuthorInput[] | Prisma.PostUncheckedCreateWithoutAuthorInput[]
   connectOrCreate?: Prisma.PostCreateOrConnectWithoutAuthorInput | Prisma.PostCreateOrConnectWithoutAuthorInput[]
@@ -627,10 +632,12 @@ export type PostCreateNestedOneWithoutFilesInput = {
   connect?: Prisma.PostWhereUniqueInput
 }
 
-export type PostUpdateOneRequiredWithoutFilesNestedInput = {
+export type PostUpdateOneWithoutFilesNestedInput = {
   create?: Prisma.XOR<Prisma.PostCreateWithoutFilesInput, Prisma.PostUncheckedCreateWithoutFilesInput>
   connectOrCreate?: Prisma.PostCreateOrConnectWithoutFilesInput
   upsert?: Prisma.PostUpsertWithoutFilesInput
+  disconnect?: Prisma.PostWhereInput | boolean
+  delete?: Prisma.PostWhereInput | boolean
   connect?: Prisma.PostWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutFilesInput, Prisma.PostUpdateWithoutFilesInput>, Prisma.PostUncheckedUpdateWithoutFilesInput>
 }

@@ -39,10 +39,11 @@ model User {
   passwordHash String? @map("password_hash")
 
   // Relations
-  profile Profile?
-  posts   Post[]
-  replies Reply[]
-  likes   PostLike[]
+  profile   Profile?
+  posts     Post[]
+  replies   Reply[]
+  likes     PostLike[]
+  postFiles PostFile[]
 
   // Soft delete 조회 최적화
   @@index([deletedAt])
@@ -65,10 +66,10 @@ model Profile {
   // Avatar 파일 메타데이터
   avatarKey      String? @map("avatar_key") // Object  key
   avatarFileName String? @map("avatar_file_name") // 원본 파일명
-  avatarMimeType String? @map("avatar_mime_type")
-  avatarFileSize Int?    @map("avatar_file_size")
-  avatarWidth    Int?
-  avatarHeight   Int?
+  // avatarMimeType String? @map("avatar_mime_type")
+  // avatarFileSize Int?    @map("avatar_file_size")
+  // avatarWidth    Int?
+  // avatarHeight   Int?
 
   // User 1:1 관계 (User 먼저 삭제 시 Profile 자동 삭제)
   userId Int  @unique @map("user_id")
@@ -118,6 +119,7 @@ model Post {
   // DB는 정렬된 데이터를 얻기 위해 인덱스를 활용할 수 있음
   @@index([published, id(sort: Desc)])
   // 3. 수치 기반 인기순: (공개글 중) 인기순 + 최신성 보장(id)
+  //    복합 정렬 (range + order에서는 desc 명시가 유리
   @@index([published, viewCount(sort: Desc), id(sort: Desc)])
   @@index([published, likeCount(sort: Desc), id(sort: Desc)])
   @@index([published, replyCount(sort: Desc), id(sort: Desc)])
@@ -131,12 +133,10 @@ model Post {
 // Reply (Post ↔ Reply)
 // =========================
 // 게시글 댓글 테이블
-// Soft delete 지원, 작성자 제한 삭제 정책
 model Reply {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at") // 자동 타임스탬프 관리 데코레이터
-  deletedAt DateTime? @map("deleted_at")
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at") // 자동 타임스탬프 관리 데코레이터
 
   content String
 
@@ -148,11 +148,9 @@ model Reply {
   authorId Int  @map("author_id")
   author   User @relation(fields: [authorId], references: [id], onDelete: Restrict)
 
-  // 게시글별 최신 댓글 조회 최적화
-  @@index([postId, createdAt])
-  // 삭제 포함/제외 조회 패턴 대응
-  @@index([postId, deletedAt, createdAt])
-  @@index([deletedAt])
+  // 핵심: 안정적 정렬 (cursor pagination)
+  @@index([postId, id(sort: Desc)])
+  @@index([authorId, id(sort: Desc)])
   @@map("replies")
 }
 
@@ -160,22 +158,21 @@ model Reply {
 // PostLike (Explicit M:N)
 // =========================
 // 좋아요 M:N 관계를 명시적 테이블로 관리
-// soft delete 가능 → 좋아요 취소 이력 추적 가능
 model PostLike {
   userId Int @map("user_id")
   postId Int @map("post_id")
 
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at") // 자동 타임스탬프 관리 데코레이터
-  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  // 한 사용자는 한 게시글에 한 번만 좋아요
-  @@id([userId, postId])
-  @@index([postId, createdAt]) // 게시글 좋아요 목록/카운트
-  @@index([deletedAt])
+  @@id([userId, postId]) // 중복 좋아요 금지
+  // 최신순 조회(DESC)가 압도적으로 많다면 아래 구성이 유리합니다.
+  // 1. 유저가 누른 좋아요 목록 (최신순)
+  @@index([userId, createdAt(sort: Desc), postId(sort: Desc)])
+  // 2. 게시글에 달린 좋아요 목록 (최신순)
+  @@index([postId, createdAt(sort: Desc), userId(sort: Desc)])
   @@map("post_likes")
 }
 
@@ -185,29 +182,24 @@ model PostLike {
 // 실제 파일은 외부 스토리지, DB에는 메타데이터만 저장
 // sortOrder로 사용자 업로드 순서 보장
 model PostFile {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at") // 자동 타임스탬프 관리 데코레이터
-  deletedAt DateTime? @map("deleted_at")
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
 
-  fileKey     String @map("file_key") // Object Storage key
-  fileName    String @map("file_name")
-  contentType String @map("content_type")
-  fileSize    Int    @map("file_size")
+  fileKey     String @unique @map("file_key") // 데이터 정합성 확보 위해 고유 제약조건
+  fileName    String @map("file_name") // 원본 파일명
+  contentType String @map("content_type") // MIME 타입 (예: image/png)
+  fileSize    BigInt @map("file_size") // 파일 크기 (바이트)
 
   downloadCount Int @default(0) @map("download_count")
 
-  // 게시글 내 표시 순서
-  sortOrder Int @default(0) @map("sort_order")
+  // 파일 업로드 후 나중에 글 연결하기 위해 nullable로 지정
+  postId Int?  @map("post_id")
+  post   Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  postId Int  @map("post_id")
-  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  // User relation (required 추천)
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // 동일 게시글 내 순서 중복 방지
-  @@unique([postId, sortOrder])
-  // 정렬 조회 최적화
-  @@index([postId, sortOrder])
-  @@index([deletedAt])
   @@map("post_files")
 }
 

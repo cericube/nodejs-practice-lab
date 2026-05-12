@@ -92,7 +92,6 @@ export class PostService {
       ...(input.likeCount !== undefined && { likeCount: input.likeCount }),
       ...(input.replyCount !== undefined && { replyCount: input.replyCount }),
     };
-
     return await this.repository.updateCounters(data);
   }
 
@@ -128,6 +127,12 @@ export class PostService {
    */
   async getPost(input: PostQueryDto): Promise<PostResponseDto> {
     const { id: postId, includeDraft = false } = input;
+    //TODO: 고성능으로 설계 변경 필요.
+    // await 없으면, 잠재적으로
+    // No record was found for an update 오류날 가능성 있음
+    // 오류 무시함.
+    await this.updateCounter({ id: postId }, { viewCount: 1 }).catch(() => []);
+
     const post = await this.repository.selectOne({ postId, includeDraft });
 
     return {

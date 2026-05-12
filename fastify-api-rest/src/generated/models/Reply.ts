@@ -42,7 +42,6 @@ export type ReplyMinAggregateOutputType = {
   id: number | null
   createdAt: Date | null
   updatedAt: Date | null
-  deletedAt: Date | null
   content: string | null
   postId: number | null
   authorId: number | null
@@ -52,7 +51,6 @@ export type ReplyMaxAggregateOutputType = {
   id: number | null
   createdAt: Date | null
   updatedAt: Date | null
-  deletedAt: Date | null
   content: string | null
   postId: number | null
   authorId: number | null
@@ -62,7 +60,6 @@ export type ReplyCountAggregateOutputType = {
   id: number
   createdAt: number
   updatedAt: number
-  deletedAt: number
   content: number
   postId: number
   authorId: number
@@ -86,7 +83,6 @@ export type ReplyMinAggregateInputType = {
   id?: true
   createdAt?: true
   updatedAt?: true
-  deletedAt?: true
   content?: true
   postId?: true
   authorId?: true
@@ -96,7 +92,6 @@ export type ReplyMaxAggregateInputType = {
   id?: true
   createdAt?: true
   updatedAt?: true
-  deletedAt?: true
   content?: true
   postId?: true
   authorId?: true
@@ -106,7 +101,6 @@ export type ReplyCountAggregateInputType = {
   id?: true
   createdAt?: true
   updatedAt?: true
-  deletedAt?: true
   content?: true
   postId?: true
   authorId?: true
@@ -203,7 +197,6 @@ export type ReplyGroupByOutputType = {
   id: number
   createdAt: Date
   updatedAt: Date
-  deletedAt: Date | null
   content: string
   postId: number
   authorId: number
@@ -236,7 +229,6 @@ export type ReplyWhereInput = {
   id?: Prisma.IntFilter<"Reply"> | number
   createdAt?: Prisma.DateTimeFilter<"Reply"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Reply"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"Reply"> | Date | string | null
   content?: Prisma.StringFilter<"Reply"> | string
   postId?: Prisma.IntFilter<"Reply"> | number
   authorId?: Prisma.IntFilter<"Reply"> | number
@@ -248,7 +240,6 @@ export type ReplyOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   content?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
@@ -263,7 +254,6 @@ export type ReplyWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ReplyWhereInput | Prisma.ReplyWhereInput[]
   createdAt?: Prisma.DateTimeFilter<"Reply"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Reply"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"Reply"> | Date | string | null
   content?: Prisma.StringFilter<"Reply"> | string
   postId?: Prisma.IntFilter<"Reply"> | number
   authorId?: Prisma.IntFilter<"Reply"> | number
@@ -275,7 +265,6 @@ export type ReplyOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   content?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
@@ -293,7 +282,6 @@ export type ReplyScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Reply"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Reply"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Reply"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Reply"> | Date | string | null
   content?: Prisma.StringWithAggregatesFilter<"Reply"> | string
   postId?: Prisma.IntWithAggregatesFilter<"Reply"> | number
   authorId?: Prisma.IntWithAggregatesFilter<"Reply"> | number
@@ -302,7 +290,6 @@ export type ReplyScalarWhereWithAggregatesInput = {
 export type ReplyCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
   content: string
   post: Prisma.PostCreateNestedOneWithoutRepliesInput
   author: Prisma.UserCreateNestedOneWithoutRepliesInput
@@ -312,7 +299,6 @@ export type ReplyUncheckedCreateInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
   content: string
   postId: number
   authorId: number
@@ -321,7 +307,6 @@ export type ReplyUncheckedCreateInput = {
 export type ReplyUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   post?: Prisma.PostUpdateOneRequiredWithoutRepliesNestedInput
   author?: Prisma.UserUpdateOneRequiredWithoutRepliesNestedInput
@@ -331,7 +316,6 @@ export type ReplyUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.IntFieldUpdateOperationsInput | number
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
@@ -341,7 +325,6 @@ export type ReplyCreateManyInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
   content: string
   postId: number
   authorId: number
@@ -350,7 +333,6 @@ export type ReplyCreateManyInput = {
 export type ReplyUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -358,7 +340,6 @@ export type ReplyUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.IntFieldUpdateOperationsInput | number
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
@@ -378,7 +359,6 @@ export type ReplyCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
   content?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
@@ -394,7 +374,6 @@ export type ReplyMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
   content?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
@@ -404,7 +383,6 @@ export type ReplyMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
   content?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
@@ -503,7 +481,6 @@ export type ReplyUncheckedUpdateManyWithoutPostNestedInput = {
 export type ReplyCreateWithoutAuthorInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
   content: string
   post: Prisma.PostCreateNestedOneWithoutRepliesInput
 }
@@ -512,7 +489,6 @@ export type ReplyUncheckedCreateWithoutAuthorInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
   content: string
   postId: number
 }
@@ -550,7 +526,6 @@ export type ReplyScalarWhereInput = {
   id?: Prisma.IntFilter<"Reply"> | number
   createdAt?: Prisma.DateTimeFilter<"Reply"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Reply"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"Reply"> | Date | string | null
   content?: Prisma.StringFilter<"Reply"> | string
   postId?: Prisma.IntFilter<"Reply"> | number
   authorId?: Prisma.IntFilter<"Reply"> | number
@@ -559,7 +534,6 @@ export type ReplyScalarWhereInput = {
 export type ReplyCreateWithoutPostInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
   content: string
   author: Prisma.UserCreateNestedOneWithoutRepliesInput
 }
@@ -568,7 +542,6 @@ export type ReplyUncheckedCreateWithoutPostInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
   content: string
   authorId: number
 }
@@ -603,7 +576,6 @@ export type ReplyCreateManyAuthorInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
   content: string
   postId: number
 }
@@ -611,7 +583,6 @@ export type ReplyCreateManyAuthorInput = {
 export type ReplyUpdateWithoutAuthorInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   post?: Prisma.PostUpdateOneRequiredWithoutRepliesNestedInput
 }
@@ -620,7 +591,6 @@ export type ReplyUncheckedUpdateWithoutAuthorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -629,7 +599,6 @@ export type ReplyUncheckedUpdateManyWithoutAuthorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -638,7 +607,6 @@ export type ReplyCreateManyPostInput = {
   id?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  deletedAt?: Date | string | null
   content: string
   authorId: number
 }
@@ -646,7 +614,6 @@ export type ReplyCreateManyPostInput = {
 export type ReplyUpdateWithoutPostInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   author?: Prisma.UserUpdateOneRequiredWithoutRepliesNestedInput
 }
@@ -655,7 +622,6 @@ export type ReplyUncheckedUpdateWithoutPostInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -664,7 +630,6 @@ export type ReplyUncheckedUpdateManyWithoutPostInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -675,7 +640,6 @@ export type ReplySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   id?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  deletedAt?: boolean
   content?: boolean
   postId?: boolean
   authorId?: boolean
@@ -687,7 +651,6 @@ export type ReplySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  deletedAt?: boolean
   content?: boolean
   postId?: boolean
   authorId?: boolean
@@ -699,7 +662,6 @@ export type ReplySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  deletedAt?: boolean
   content?: boolean
   postId?: boolean
   authorId?: boolean
@@ -711,13 +673,12 @@ export type ReplySelectScalar = {
   id?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  deletedAt?: boolean
   content?: boolean
   postId?: boolean
   authorId?: boolean
 }
 
-export type ReplyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "deletedAt" | "content" | "postId" | "authorId", ExtArgs["result"]["reply"]>
+export type ReplyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "content" | "postId" | "authorId", ExtArgs["result"]["reply"]>
 export type ReplyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -741,7 +702,6 @@ export type $ReplyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     id: number
     createdAt: Date
     updatedAt: Date
-    deletedAt: Date | null
     content: string
     postId: number
     authorId: number
@@ -1173,7 +1133,6 @@ export interface ReplyFieldRefs {
   readonly id: Prisma.FieldRef<"Reply", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Reply", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Reply", 'DateTime'>
-  readonly deletedAt: Prisma.FieldRef<"Reply", 'DateTime'>
   readonly content: Prisma.FieldRef<"Reply", 'String'>
   readonly postId: Prisma.FieldRef<"Reply", 'Int'>
   readonly authorId: Prisma.FieldRef<"Reply", 'Int'>

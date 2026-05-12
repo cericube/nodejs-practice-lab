@@ -30,58 +30,52 @@ export type PostFileAvgAggregateOutputType = {
   id: number | null
   fileSize: number | null
   downloadCount: number | null
-  sortOrder: number | null
   postId: number | null
+  userId: number | null
 }
 
 export type PostFileSumAggregateOutputType = {
   id: number | null
-  fileSize: number | null
+  fileSize: bigint | null
   downloadCount: number | null
-  sortOrder: number | null
   postId: number | null
+  userId: number | null
 }
 
 export type PostFileMinAggregateOutputType = {
   id: number | null
   createdAt: Date | null
-  updatedAt: Date | null
-  deletedAt: Date | null
   fileKey: string | null
   fileName: string | null
   contentType: string | null
-  fileSize: number | null
+  fileSize: bigint | null
   downloadCount: number | null
-  sortOrder: number | null
   postId: number | null
+  userId: number | null
 }
 
 export type PostFileMaxAggregateOutputType = {
   id: number | null
   createdAt: Date | null
-  updatedAt: Date | null
-  deletedAt: Date | null
   fileKey: string | null
   fileName: string | null
   contentType: string | null
-  fileSize: number | null
+  fileSize: bigint | null
   downloadCount: number | null
-  sortOrder: number | null
   postId: number | null
+  userId: number | null
 }
 
 export type PostFileCountAggregateOutputType = {
   id: number
   createdAt: number
-  updatedAt: number
-  deletedAt: number
   fileKey: number
   fileName: number
   contentType: number
   fileSize: number
   downloadCount: number
-  sortOrder: number
   postId: number
+  userId: number
   _all: number
 }
 
@@ -90,58 +84,52 @@ export type PostFileAvgAggregateInputType = {
   id?: true
   fileSize?: true
   downloadCount?: true
-  sortOrder?: true
   postId?: true
+  userId?: true
 }
 
 export type PostFileSumAggregateInputType = {
   id?: true
   fileSize?: true
   downloadCount?: true
-  sortOrder?: true
   postId?: true
+  userId?: true
 }
 
 export type PostFileMinAggregateInputType = {
   id?: true
   createdAt?: true
-  updatedAt?: true
-  deletedAt?: true
   fileKey?: true
   fileName?: true
   contentType?: true
   fileSize?: true
   downloadCount?: true
-  sortOrder?: true
   postId?: true
+  userId?: true
 }
 
 export type PostFileMaxAggregateInputType = {
   id?: true
   createdAt?: true
-  updatedAt?: true
-  deletedAt?: true
   fileKey?: true
   fileName?: true
   contentType?: true
   fileSize?: true
   downloadCount?: true
-  sortOrder?: true
   postId?: true
+  userId?: true
 }
 
 export type PostFileCountAggregateInputType = {
   id?: true
   createdAt?: true
-  updatedAt?: true
-  deletedAt?: true
   fileKey?: true
   fileName?: true
   contentType?: true
   fileSize?: true
   downloadCount?: true
-  sortOrder?: true
   postId?: true
+  userId?: true
   _all?: true
 }
 
@@ -234,15 +222,13 @@ export type PostFileGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type PostFileGroupByOutputType = {
   id: number
   createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
   fileKey: string
   fileName: string
   contentType: string
-  fileSize: number
+  fileSize: bigint
   downloadCount: number
-  sortOrder: number
-  postId: number
+  postId: number | null
+  userId: number
   _count: PostFileCountAggregateOutputType | null
   _avg: PostFileAvgAggregateOutputType | null
   _sum: PostFileSumAggregateOutputType | null
@@ -271,64 +257,58 @@ export type PostFileWhereInput = {
   NOT?: Prisma.PostFileWhereInput | Prisma.PostFileWhereInput[]
   id?: Prisma.IntFilter<"PostFile"> | number
   createdAt?: Prisma.DateTimeFilter<"PostFile"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"PostFile"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"PostFile"> | Date | string | null
   fileKey?: Prisma.StringFilter<"PostFile"> | string
   fileName?: Prisma.StringFilter<"PostFile"> | string
   contentType?: Prisma.StringFilter<"PostFile"> | string
-  fileSize?: Prisma.IntFilter<"PostFile"> | number
+  fileSize?: Prisma.BigIntFilter<"PostFile"> | bigint | number
   downloadCount?: Prisma.IntFilter<"PostFile"> | number
-  sortOrder?: Prisma.IntFilter<"PostFile"> | number
-  postId?: Prisma.IntFilter<"PostFile"> | number
-  post?: Prisma.XOR<Prisma.PostScalarRelationFilter, Prisma.PostWhereInput>
+  postId?: Prisma.IntNullableFilter<"PostFile"> | number | null
+  userId?: Prisma.IntFilter<"PostFile"> | number
+  post?: Prisma.XOR<Prisma.PostNullableScalarRelationFilter, Prisma.PostWhereInput> | null
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type PostFileOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   fileKey?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
   contentType?: Prisma.SortOrder
   fileSize?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
-  sortOrder?: Prisma.SortOrder
-  postId?: Prisma.SortOrder
+  postId?: Prisma.SortOrderInput | Prisma.SortOrder
+  userId?: Prisma.SortOrder
   post?: Prisma.PostOrderByWithRelationInput
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type PostFileWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  postId_sortOrder?: Prisma.PostFilePostIdSortOrderCompoundUniqueInput
+  fileKey?: string
   AND?: Prisma.PostFileWhereInput | Prisma.PostFileWhereInput[]
   OR?: Prisma.PostFileWhereInput[]
   NOT?: Prisma.PostFileWhereInput | Prisma.PostFileWhereInput[]
   createdAt?: Prisma.DateTimeFilter<"PostFile"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"PostFile"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"PostFile"> | Date | string | null
-  fileKey?: Prisma.StringFilter<"PostFile"> | string
   fileName?: Prisma.StringFilter<"PostFile"> | string
   contentType?: Prisma.StringFilter<"PostFile"> | string
-  fileSize?: Prisma.IntFilter<"PostFile"> | number
+  fileSize?: Prisma.BigIntFilter<"PostFile"> | bigint | number
   downloadCount?: Prisma.IntFilter<"PostFile"> | number
-  sortOrder?: Prisma.IntFilter<"PostFile"> | number
-  postId?: Prisma.IntFilter<"PostFile"> | number
-  post?: Prisma.XOR<Prisma.PostScalarRelationFilter, Prisma.PostWhereInput>
-}, "id" | "postId_sortOrder">
+  postId?: Prisma.IntNullableFilter<"PostFile"> | number | null
+  userId?: Prisma.IntFilter<"PostFile"> | number
+  post?: Prisma.XOR<Prisma.PostNullableScalarRelationFilter, Prisma.PostWhereInput> | null
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+}, "id" | "fileKey">
 
 export type PostFileOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   fileKey?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
   contentType?: Prisma.SortOrder
   fileSize?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
-  sortOrder?: Prisma.SortOrder
-  postId?: Prisma.SortOrder
+  postId?: Prisma.SortOrderInput | Prisma.SortOrder
+  userId?: Prisma.SortOrder
   _count?: Prisma.PostFileCountOrderByAggregateInput
   _avg?: Prisma.PostFileAvgOrderByAggregateInput
   _max?: Prisma.PostFileMaxOrderByAggregateInput
@@ -342,109 +322,92 @@ export type PostFileScalarWhereWithAggregatesInput = {
   NOT?: Prisma.PostFileScalarWhereWithAggregatesInput | Prisma.PostFileScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"PostFile"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PostFile"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PostFile"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PostFile"> | Date | string | null
   fileKey?: Prisma.StringWithAggregatesFilter<"PostFile"> | string
   fileName?: Prisma.StringWithAggregatesFilter<"PostFile"> | string
   contentType?: Prisma.StringWithAggregatesFilter<"PostFile"> | string
-  fileSize?: Prisma.IntWithAggregatesFilter<"PostFile"> | number
+  fileSize?: Prisma.BigIntWithAggregatesFilter<"PostFile"> | bigint | number
   downloadCount?: Prisma.IntWithAggregatesFilter<"PostFile"> | number
-  sortOrder?: Prisma.IntWithAggregatesFilter<"PostFile"> | number
-  postId?: Prisma.IntWithAggregatesFilter<"PostFile"> | number
+  postId?: Prisma.IntNullableWithAggregatesFilter<"PostFile"> | number | null
+  userId?: Prisma.IntWithAggregatesFilter<"PostFile"> | number
 }
 
 export type PostFileCreateInput = {
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
   fileKey: string
   fileName: string
   contentType: string
-  fileSize: number
+  fileSize: bigint | number
   downloadCount?: number
-  sortOrder?: number
-  post: Prisma.PostCreateNestedOneWithoutFilesInput
+  post?: Prisma.PostCreateNestedOneWithoutFilesInput
+  user: Prisma.UserCreateNestedOneWithoutPostFilesInput
 }
 
 export type PostFileUncheckedCreateInput = {
   id?: number
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
   fileKey: string
   fileName: string
   contentType: string
-  fileSize: number
+  fileSize: bigint | number
   downloadCount?: number
-  sortOrder?: number
-  postId: number
+  postId?: number | null
+  userId: number
 }
 
 export type PostFileUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fileKey?: Prisma.StringFieldUpdateOperationsInput | string
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
-  fileSize?: Prisma.IntFieldUpdateOperationsInput | number
+  fileSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  post?: Prisma.PostUpdateOneRequiredWithoutFilesNestedInput
+  post?: Prisma.PostUpdateOneWithoutFilesNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutPostFilesNestedInput
 }
 
 export type PostFileUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fileKey?: Prisma.StringFieldUpdateOperationsInput | string
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
-  fileSize?: Prisma.IntFieldUpdateOperationsInput | number
+  fileSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  postId?: Prisma.IntFieldUpdateOperationsInput | number
+  postId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type PostFileCreateManyInput = {
   id?: number
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
   fileKey: string
   fileName: string
   contentType: string
-  fileSize: number
+  fileSize: bigint | number
   downloadCount?: number
-  sortOrder?: number
-  postId: number
+  postId?: number | null
+  userId: number
 }
 
 export type PostFileUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fileKey?: Prisma.StringFieldUpdateOperationsInput | string
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
-  fileSize?: Prisma.IntFieldUpdateOperationsInput | number
+  fileSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type PostFileUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fileKey?: Prisma.StringFieldUpdateOperationsInput | string
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
-  fileSize?: Prisma.IntFieldUpdateOperationsInput | number
+  fileSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  postId?: Prisma.IntFieldUpdateOperationsInput | number
+  postId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type PostFileListRelationFilter = {
@@ -457,67 +420,98 @@ export type PostFileOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type PostFilePostIdSortOrderCompoundUniqueInput = {
-  postId: number
-  sortOrder: number
-}
-
 export type PostFileCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
   fileKey?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
   contentType?: Prisma.SortOrder
   fileSize?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
-  sortOrder?: Prisma.SortOrder
   postId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type PostFileAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   fileSize?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
-  sortOrder?: Prisma.SortOrder
   postId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type PostFileMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
   fileKey?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
   contentType?: Prisma.SortOrder
   fileSize?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
-  sortOrder?: Prisma.SortOrder
   postId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type PostFileMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
   fileKey?: Prisma.SortOrder
   fileName?: Prisma.SortOrder
   contentType?: Prisma.SortOrder
   fileSize?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
-  sortOrder?: Prisma.SortOrder
   postId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type PostFileSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   fileSize?: Prisma.SortOrder
   downloadCount?: Prisma.SortOrder
-  sortOrder?: Prisma.SortOrder
   postId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+}
+
+export type PostFileCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.PostFileCreateWithoutUserInput, Prisma.PostFileUncheckedCreateWithoutUserInput> | Prisma.PostFileCreateWithoutUserInput[] | Prisma.PostFileUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.PostFileCreateOrConnectWithoutUserInput | Prisma.PostFileCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.PostFileCreateManyUserInputEnvelope
+  connect?: Prisma.PostFileWhereUniqueInput | Prisma.PostFileWhereUniqueInput[]
+}
+
+export type PostFileUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.PostFileCreateWithoutUserInput, Prisma.PostFileUncheckedCreateWithoutUserInput> | Prisma.PostFileCreateWithoutUserInput[] | Prisma.PostFileUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.PostFileCreateOrConnectWithoutUserInput | Prisma.PostFileCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.PostFileCreateManyUserInputEnvelope
+  connect?: Prisma.PostFileWhereUniqueInput | Prisma.PostFileWhereUniqueInput[]
+}
+
+export type PostFileUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.PostFileCreateWithoutUserInput, Prisma.PostFileUncheckedCreateWithoutUserInput> | Prisma.PostFileCreateWithoutUserInput[] | Prisma.PostFileUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.PostFileCreateOrConnectWithoutUserInput | Prisma.PostFileCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.PostFileUpsertWithWhereUniqueWithoutUserInput | Prisma.PostFileUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.PostFileCreateManyUserInputEnvelope
+  set?: Prisma.PostFileWhereUniqueInput | Prisma.PostFileWhereUniqueInput[]
+  disconnect?: Prisma.PostFileWhereUniqueInput | Prisma.PostFileWhereUniqueInput[]
+  delete?: Prisma.PostFileWhereUniqueInput | Prisma.PostFileWhereUniqueInput[]
+  connect?: Prisma.PostFileWhereUniqueInput | Prisma.PostFileWhereUniqueInput[]
+  update?: Prisma.PostFileUpdateWithWhereUniqueWithoutUserInput | Prisma.PostFileUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.PostFileUpdateManyWithWhereWithoutUserInput | Prisma.PostFileUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.PostFileScalarWhereInput | Prisma.PostFileScalarWhereInput[]
+}
+
+export type PostFileUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.PostFileCreateWithoutUserInput, Prisma.PostFileUncheckedCreateWithoutUserInput> | Prisma.PostFileCreateWithoutUserInput[] | Prisma.PostFileUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.PostFileCreateOrConnectWithoutUserInput | Prisma.PostFileCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.PostFileUpsertWithWhereUniqueWithoutUserInput | Prisma.PostFileUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.PostFileCreateManyUserInputEnvelope
+  set?: Prisma.PostFileWhereUniqueInput | Prisma.PostFileWhereUniqueInput[]
+  disconnect?: Prisma.PostFileWhereUniqueInput | Prisma.PostFileWhereUniqueInput[]
+  delete?: Prisma.PostFileWhereUniqueInput | Prisma.PostFileWhereUniqueInput[]
+  connect?: Prisma.PostFileWhereUniqueInput | Prisma.PostFileWhereUniqueInput[]
+  update?: Prisma.PostFileUpdateWithWhereUniqueWithoutUserInput | Prisma.PostFileUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.PostFileUpdateManyWithWhereWithoutUserInput | Prisma.PostFileUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.PostFileScalarWhereInput | Prisma.PostFileScalarWhereInput[]
 }
 
 export type PostFileCreateNestedManyWithoutPostInput = {
@@ -562,29 +556,103 @@ export type PostFileUncheckedUpdateManyWithoutPostNestedInput = {
   deleteMany?: Prisma.PostFileScalarWhereInput | Prisma.PostFileScalarWhereInput[]
 }
 
-export type PostFileCreateWithoutPostInput = {
+export type BigIntFieldUpdateOperationsInput = {
+  set?: bigint | number
+  increment?: bigint | number
+  decrement?: bigint | number
+  multiply?: bigint | number
+  divide?: bigint | number
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type PostFileCreateWithoutUserInput = {
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
   fileKey: string
   fileName: string
   contentType: string
-  fileSize: number
+  fileSize: bigint | number
   downloadCount?: number
-  sortOrder?: number
+  post?: Prisma.PostCreateNestedOneWithoutFilesInput
+}
+
+export type PostFileUncheckedCreateWithoutUserInput = {
+  id?: number
+  createdAt?: Date | string
+  fileKey: string
+  fileName: string
+  contentType: string
+  fileSize: bigint | number
+  downloadCount?: number
+  postId?: number | null
+}
+
+export type PostFileCreateOrConnectWithoutUserInput = {
+  where: Prisma.PostFileWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostFileCreateWithoutUserInput, Prisma.PostFileUncheckedCreateWithoutUserInput>
+}
+
+export type PostFileCreateManyUserInputEnvelope = {
+  data: Prisma.PostFileCreateManyUserInput | Prisma.PostFileCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type PostFileUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.PostFileWhereUniqueInput
+  update: Prisma.XOR<Prisma.PostFileUpdateWithoutUserInput, Prisma.PostFileUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.PostFileCreateWithoutUserInput, Prisma.PostFileUncheckedCreateWithoutUserInput>
+}
+
+export type PostFileUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.PostFileWhereUniqueInput
+  data: Prisma.XOR<Prisma.PostFileUpdateWithoutUserInput, Prisma.PostFileUncheckedUpdateWithoutUserInput>
+}
+
+export type PostFileUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.PostFileScalarWhereInput
+  data: Prisma.XOR<Prisma.PostFileUpdateManyMutationInput, Prisma.PostFileUncheckedUpdateManyWithoutUserInput>
+}
+
+export type PostFileScalarWhereInput = {
+  AND?: Prisma.PostFileScalarWhereInput | Prisma.PostFileScalarWhereInput[]
+  OR?: Prisma.PostFileScalarWhereInput[]
+  NOT?: Prisma.PostFileScalarWhereInput | Prisma.PostFileScalarWhereInput[]
+  id?: Prisma.IntFilter<"PostFile"> | number
+  createdAt?: Prisma.DateTimeFilter<"PostFile"> | Date | string
+  fileKey?: Prisma.StringFilter<"PostFile"> | string
+  fileName?: Prisma.StringFilter<"PostFile"> | string
+  contentType?: Prisma.StringFilter<"PostFile"> | string
+  fileSize?: Prisma.BigIntFilter<"PostFile"> | bigint | number
+  downloadCount?: Prisma.IntFilter<"PostFile"> | number
+  postId?: Prisma.IntNullableFilter<"PostFile"> | number | null
+  userId?: Prisma.IntFilter<"PostFile"> | number
+}
+
+export type PostFileCreateWithoutPostInput = {
+  createdAt?: Date | string
+  fileKey: string
+  fileName: string
+  contentType: string
+  fileSize: bigint | number
+  downloadCount?: number
+  user: Prisma.UserCreateNestedOneWithoutPostFilesInput
 }
 
 export type PostFileUncheckedCreateWithoutPostInput = {
   id?: number
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
   fileKey: string
   fileName: string
   contentType: string
-  fileSize: number
+  fileSize: bigint | number
   downloadCount?: number
-  sortOrder?: number
+  userId: number
 }
 
 export type PostFileCreateOrConnectWithoutPostInput = {
@@ -613,72 +681,90 @@ export type PostFileUpdateManyWithWhereWithoutPostInput = {
   data: Prisma.XOR<Prisma.PostFileUpdateManyMutationInput, Prisma.PostFileUncheckedUpdateManyWithoutPostInput>
 }
 
-export type PostFileScalarWhereInput = {
-  AND?: Prisma.PostFileScalarWhereInput | Prisma.PostFileScalarWhereInput[]
-  OR?: Prisma.PostFileScalarWhereInput[]
-  NOT?: Prisma.PostFileScalarWhereInput | Prisma.PostFileScalarWhereInput[]
-  id?: Prisma.IntFilter<"PostFile"> | number
-  createdAt?: Prisma.DateTimeFilter<"PostFile"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"PostFile"> | Date | string
-  deletedAt?: Prisma.DateTimeNullableFilter<"PostFile"> | Date | string | null
-  fileKey?: Prisma.StringFilter<"PostFile"> | string
-  fileName?: Prisma.StringFilter<"PostFile"> | string
-  contentType?: Prisma.StringFilter<"PostFile"> | string
-  fileSize?: Prisma.IntFilter<"PostFile"> | number
-  downloadCount?: Prisma.IntFilter<"PostFile"> | number
-  sortOrder?: Prisma.IntFilter<"PostFile"> | number
-  postId?: Prisma.IntFilter<"PostFile"> | number
+export type PostFileCreateManyUserInput = {
+  id?: number
+  createdAt?: Date | string
+  fileKey: string
+  fileName: string
+  contentType: string
+  fileSize: bigint | number
+  downloadCount?: number
+  postId?: number | null
+}
+
+export type PostFileUpdateWithoutUserInput = {
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileKey?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
+  post?: Prisma.PostUpdateOneWithoutFilesNestedInput
+}
+
+export type PostFileUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileKey?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
+  postId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type PostFileUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileKey?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  contentType?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
+  postId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type PostFileCreateManyPostInput = {
   id?: number
   createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
   fileKey: string
   fileName: string
   contentType: string
-  fileSize: number
+  fileSize: bigint | number
   downloadCount?: number
-  sortOrder?: number
+  userId: number
 }
 
 export type PostFileUpdateWithoutPostInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fileKey?: Prisma.StringFieldUpdateOperationsInput | string
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
-  fileSize?: Prisma.IntFieldUpdateOperationsInput | number
+  fileSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  user?: Prisma.UserUpdateOneRequiredWithoutPostFilesNestedInput
 }
 
 export type PostFileUncheckedUpdateWithoutPostInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fileKey?: Prisma.StringFieldUpdateOperationsInput | string
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
-  fileSize?: Prisma.IntFieldUpdateOperationsInput | number
+  fileSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type PostFileUncheckedUpdateManyWithoutPostInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   fileKey?: Prisma.StringFieldUpdateOperationsInput | string
   fileName?: Prisma.StringFieldUpdateOperationsInput | string
   contentType?: Prisma.StringFieldUpdateOperationsInput | string
-  fileSize?: Prisma.IntFieldUpdateOperationsInput | number
+  fileSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   downloadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -686,90 +772,87 @@ export type PostFileUncheckedUpdateManyWithoutPostInput = {
 export type PostFileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
-  deletedAt?: boolean
   fileKey?: boolean
   fileName?: boolean
   contentType?: boolean
   fileSize?: boolean
   downloadCount?: boolean
-  sortOrder?: boolean
   postId?: boolean
-  post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  userId?: boolean
+  post?: boolean | Prisma.PostFile$postArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["postFile"]>
 
 export type PostFileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
-  deletedAt?: boolean
   fileKey?: boolean
   fileName?: boolean
   contentType?: boolean
   fileSize?: boolean
   downloadCount?: boolean
-  sortOrder?: boolean
   postId?: boolean
-  post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  userId?: boolean
+  post?: boolean | Prisma.PostFile$postArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["postFile"]>
 
 export type PostFileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
-  deletedAt?: boolean
   fileKey?: boolean
   fileName?: boolean
   contentType?: boolean
   fileSize?: boolean
   downloadCount?: boolean
-  sortOrder?: boolean
   postId?: boolean
-  post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  userId?: boolean
+  post?: boolean | Prisma.PostFile$postArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["postFile"]>
 
 export type PostFileSelectScalar = {
   id?: boolean
   createdAt?: boolean
-  updatedAt?: boolean
-  deletedAt?: boolean
   fileKey?: boolean
   fileName?: boolean
   contentType?: boolean
   fileSize?: boolean
   downloadCount?: boolean
-  sortOrder?: boolean
   postId?: boolean
+  userId?: boolean
 }
 
-export type PostFileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "updatedAt" | "deletedAt" | "fileKey" | "fileName" | "contentType" | "fileSize" | "downloadCount" | "sortOrder" | "postId", ExtArgs["result"]["postFile"]>
+export type PostFileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "fileKey" | "fileName" | "contentType" | "fileSize" | "downloadCount" | "postId" | "userId", ExtArgs["result"]["postFile"]>
 export type PostFileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  post?: boolean | Prisma.PostFile$postArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type PostFileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  post?: boolean | Prisma.PostFile$postArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type PostFileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
+  post?: boolean | Prisma.PostFile$postArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $PostFilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PostFile"
   objects: {
-    post: Prisma.$PostPayload<ExtArgs>
+    post: Prisma.$PostPayload<ExtArgs> | null
+    user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     createdAt: Date
-    updatedAt: Date
-    deletedAt: Date | null
     fileKey: string
     fileName: string
     contentType: string
-    fileSize: number
+    fileSize: bigint
     downloadCount: number
-    sortOrder: number
-    postId: number
+    postId: number | null
+    userId: number
   }, ExtArgs["result"]["postFile"]>
   composites: {}
 }
@@ -1164,7 +1247,8 @@ readonly fields: PostFileFieldRefs;
  */
 export interface Prisma__PostFileClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  post<T extends Prisma.PostDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PostDefaultArgs<ExtArgs>>): Prisma.Prisma__PostClient<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  post<T extends Prisma.PostFile$postArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PostFile$postArgs<ExtArgs>>): Prisma.Prisma__PostClient<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1196,15 +1280,13 @@ export interface Prisma__PostFileClient<T, Null = never, ExtArgs extends runtime
 export interface PostFileFieldRefs {
   readonly id: Prisma.FieldRef<"PostFile", 'Int'>
   readonly createdAt: Prisma.FieldRef<"PostFile", 'DateTime'>
-  readonly updatedAt: Prisma.FieldRef<"PostFile", 'DateTime'>
-  readonly deletedAt: Prisma.FieldRef<"PostFile", 'DateTime'>
   readonly fileKey: Prisma.FieldRef<"PostFile", 'String'>
   readonly fileName: Prisma.FieldRef<"PostFile", 'String'>
   readonly contentType: Prisma.FieldRef<"PostFile", 'String'>
-  readonly fileSize: Prisma.FieldRef<"PostFile", 'Int'>
+  readonly fileSize: Prisma.FieldRef<"PostFile", 'BigInt'>
   readonly downloadCount: Prisma.FieldRef<"PostFile", 'Int'>
-  readonly sortOrder: Prisma.FieldRef<"PostFile", 'Int'>
   readonly postId: Prisma.FieldRef<"PostFile", 'Int'>
+  readonly userId: Prisma.FieldRef<"PostFile", 'Int'>
 }
     
 
@@ -1598,6 +1680,25 @@ export type PostFileDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Limit how many PostFiles to delete.
    */
   limit?: number
+}
+
+/**
+ * PostFile.post
+ */
+export type PostFile$postArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Post
+   */
+  select?: Prisma.PostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Post
+   */
+  omit?: Prisma.PostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PostInclude<ExtArgs> | null
+  where?: Prisma.PostWhereInput
 }
 
 /**

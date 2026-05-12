@@ -1,4 +1,4 @@
-// tests/module/user/user.repository.test.ts
+// tests/module/user/user.route.test.ts
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import type { FastifyInstance } from 'fastify';
@@ -35,7 +35,7 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  if (app) await app.close();
+  // if (app) await app.close();
 });
 
 describe('UserRoute - 사용자 입력 테스트 ', () => {

@@ -40,9 +40,9 @@ export const userRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   // ------------------------------------------------------
 
   /**
-   * @route    POST /api/users
-   * @desc     새로운 사용자 등록
-   * @validate - 요청: UserCreateBodySchema에 정의된 필수 필드(email, password 등) 유무 확인
+   * POST /api/users
+   * 새로운 사용자 등록
+   * - 요청: UserCreateBodySchema에 정의된 필수 필드(email, password 등) 유무 확인
    * - 응답: 생성된 사용자 정보를 UserResponseSchema 규격에 맞춰 필터링 후 반환
    */
   fastify.post(
@@ -61,9 +61,9 @@ export const userRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * @route    PATCH /api/users/:id (예: /api/users/123)
-   * @desc     사용자 정보 수정
-   * @validate - 요청: URL의 :id가 유효한 형식인지(Params) + 수정할 필드만 포함된 Body 검증
+   * PATCH /api/users/:id (예: /api/users/123)
+   * 사용자 정보 수정
+   * - 요청: URL의 :id가 유효한 형식인지(Params) + 수정할 필드만 포함된 Body 검증
    * - 응답: 수정 완료된 사용자 정보를 표준 규격으로 반환
    */
   fastify.patch(
@@ -83,9 +83,9 @@ export const userRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * @route    GET /api/users?email=test@test.com
-   * @desc     조건 기반 사용자 단건 상세 조회
-   * @validate - 요청: QueryString에 허용된 검색 조건만 포함되어 있는지 확인
+   * GET /api/users?email=test@test.com
+   * 조건 기반 사용자 단건 상세 조회
+   * - 요청: QueryString에 허용된 검색 조건만 포함되어 있는지 확인
    * - 응답: 상세 프로필 정보를 포함한 UserDetailResponseSchema 반환
    */
   fastify.get(
@@ -104,9 +104,9 @@ export const userRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * @route    GET /api/users/count?role=ADMIN
-   * @desc     조건에 맞는 사용자 수 조회
-   * @validate - 요청: 카운트용 필터 조건 검증
+   * GET /api/users/count?role=ADMIN
+   * 조건에 맞는 사용자 수 조회
+   * - 요청: 카운트용 필터 조건 검증
    * - 응답: { count: number } 형태의 데이터 보장
    */
   fastify.get(
@@ -125,9 +125,9 @@ export const userRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * @route    GET /api/users/exists?nickname=gemini
-   * @desc     아이디/이메일 등 중복 여부 확인
-   * @validate - 요청: 존재 확인을 위한 필드값 검증
+   * GET /api/users/exists?nickname=gemini
+   * 아이디/이메일 등 중복 여부 확인
+   * - 요청: 존재 확인을 위한 필드값 검증
    * - 응답: { exists: boolean } 형태의 명확한 타입 보장
    */
   fastify.get(
@@ -146,9 +146,9 @@ export const userRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * @route    DELETE /api/users/:id (예: /api/users/123)
-   * @desc     사용자 탈퇴 (Soft Delete)
-   * @validate - 요청: 삭제 대상 식별자(:id) 형식 검증
+   * DELETE /api/users/:id (예: /api/users/123)
+   * 사용자 탈퇴 (Soft Delete)
+   * - 요청: 삭제 대상 식별자(:id) 형식 검증
    * - 응답: 삭제 처리된 데이터의 기본 상태 정보 반환
    */
   fastify.delete(
@@ -167,9 +167,9 @@ export const userRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * @route    PATCH /api/users/:id/restore (예: /api/users/123/restore)
-   * @desc     삭제된 사용자 복구
-   * @validate - 요청: 복구 대상 식별자(:id) 검증
+   * PATCH /api/users/:id/restore (예: /api/users/123/restore)
+   * 삭제된 사용자 복구
+   * - 요청: 복구 대상 식별자(:id) 검증
    * - 응답: 활성화된 사용자 정보 반환
    */
   fastify.patch(
@@ -188,9 +188,9 @@ export const userRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * @route    GET /api/users/list?page=1&limit=10
-   * @desc     사용자 목록 검색 및 페이징 조회
-   * @validate - 요청: 페이지 번호, 한 페이지당 개수 등 Pagination 스키마 검증
+   * GET /api/users/list?page=1&limit=10
+   * 사용자 목록 검색 및 페이징 조회
+   * - 요청: 페이지 번호, 한 페이지당 개수 등 Pagination 스키마 검증
    * - 응답: 데이터 배열과 메타데이터를 포함한 UserListResponseSchema 반환
    */
   fastify.get(

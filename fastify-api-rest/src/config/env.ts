@@ -30,6 +30,12 @@ export const env = {
   LOG_LEVEL: process.env.LOG_LEVEL || 'info',
   LOG_PATH: process.env.LOG_PATH || './logs/app-dev.log',
 
+  // upload
+  UPLOAD_DIR: process.env.UPLOAD_DIR || './uploads',
+  // 파일 첨부 갯수 제한(글당)
+  UPLOAD_MAX_FILES: Number(process.env.UPLOAD_MAX_FILES) || 5,
+  UPLOAD_MAX_FILE_SIZE: Number(process.env.UPLOAD_MAX_FILE_SIZE) || 10485760,
+
   // DB 연결 문자열 (미설정 시 빈 문자열)
   DATABASE_SCHEMA: resolveSchemaFromConnectionString(process.env.DATABASE_URL),
   DATABASE_URL: process.env.DATABASE_URL,
