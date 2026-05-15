@@ -4,30 +4,36 @@ import type { MultipartFile } from '@fastify/multipart';
 import type { PostFileService } from './postfile.service';
 import type {
   PostFileDownloadMetaDto,
-  PostFileIdParamsDto,
   PostFileListResponseDto,
-  PostFilePostIdParamsDto,
-  PostFileResponseDto,
+  PostFilePostIdDto,
+  PostFileUserIdDto,
+  PostFileBaseParamsDto,
+  PostFilesBodyDto,
+  PostFileAttachParamsDto,
 } from './postfile.dto';
 
 export class PostFileController {
   constructor(private readonly service: PostFileService) {}
 
-  uploadFile(file: MultipartFile, postId: PostFilePostIdParamsDto): Promise<PostFileResponseDto> {
-    return this.service.uploadFile(file, postId);
+  uploadFile(file: MultipartFile, userId: PostFileUserIdDto): Promise<PostFileBaseParamsDto> {
+    return this.service.uploadFile(file, userId);
+  }
+
+  attachFiles(params: PostFileAttachParamsDto, body: PostFilesBodyDto): Promise<{ count: number }> {
+    return this.service.attachFileToPost(params, body);
   }
 
   downloadFile(
-    fileId: PostFileIdParamsDto,
-  ): Promise<{ meta: PostFileDownloadMetaDto; stream: NodeJS.ReadableStream }> {
-    return this.service.downloadFile(fileId);
+    data: PostFileBaseParamsDto,
+  ): Promise<{ stream: NodeJS.ReadableStream; meta: PostFileDownloadMetaDto }> {
+    return this.service.downloadFile(data);
   }
 
-  deleteFile(fileId: PostFileIdParamsDto): Promise<PostFileResponseDto> {
-    return this.service.deleteFile(fileId);
+  deleteFile(user: PostFileUserIdDto, data: PostFileBaseParamsDto): Promise<PostFileBaseParamsDto> {
+    return this.service.deleteFile(user, data);
   }
 
-  getFileListByPostId(postId: PostFilePostIdParamsDto): Promise<PostFileListResponseDto> {
-    return this.service.listFilesByPostId(postId);
+  getFileList(data: PostFilePostIdDto): Promise<PostFileListResponseDto> {
+    return this.service.listFilesByPostId(data);
   }
 }

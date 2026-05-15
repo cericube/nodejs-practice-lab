@@ -42,6 +42,7 @@ const postListSelect: Prisma.PostSelect = {
  */
 const postDetailSelect: Prisma.PostSelect = {
   ...postListSelect,
+  authorId: true,
   content: true,
   updatedAt: true,
   publishedAt: true,

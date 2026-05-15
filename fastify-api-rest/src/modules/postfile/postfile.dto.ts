@@ -3,14 +3,42 @@
 import { Type, type Static } from '@sinclair/typebox';
 
 // 파일 등록 요청
-export const PostFileBaseParamsSchema = Type.Object(
+export const PostFileUserIdSchema = Type.Object(
   {
     userId: Type.Integer(),
-    postId: Type.Optional(Type.Integer()),
+  },
+  { $id: 'PostFileUserIdSchema', additionalProperties: false },
+);
+export type PostFileUserIdDto = Static<typeof PostFileUserIdSchema>;
+
+export const PostFilePostIdSchema = Type.Object(
+  {
+    postId: Type.Integer(),
+  },
+  { $id: 'PostFilePostIdSchema', additionalProperties: false },
+);
+export type PostFilePostIdDto = Static<typeof PostFilePostIdSchema>;
+
+export const PostFileAttachParamsSchema = Type.Object(
+  {
+    userId: Type.Integer(),
+    postId: Type.Integer(),
+  },
+  { $id: 'PostFileAttachParamsSchema', additionalProperties: false },
+);
+export type PostFileAttachParamsDto = Static<typeof PostFileAttachParamsSchema>;
+
+// 파일 다운로드 요청/삭제 요청 DTO
+export const PostFileBaseParamsSchema = Type.Object(
+  {
+    id: Type.Integer(),
+    fileKey: Type.String(),
   },
   { $id: 'PostFileBaseParams', additionalProperties: false },
 );
 export type PostFileBaseParamsDto = Static<typeof PostFileBaseParamsSchema>;
+
+// ===========================
 
 // 게시글 파일 등록 요청 DTO
 export const PostFilesBodySchema = Type.Object(
@@ -40,7 +68,7 @@ export type PostFileDownloadMetaDto = Static<typeof PostFileDownloadMetaSchema>;
 export const PostFileResponseSchema = Type.Object(
   {
     id: Type.Integer(),
-    postId: Type.Integer(),
+    postId: Type.Union([Type.Integer(), Type.Null()]),
     fileKey: Type.String(),
     fileName: Type.String(),
     contentType: Type.String(),
