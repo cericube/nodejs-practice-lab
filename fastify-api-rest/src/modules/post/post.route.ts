@@ -108,21 +108,21 @@ export const postRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
    * - 응답:
    *   - 변경된 게시글 식별자 반환
    */
-  fastify.patch(
-    '/:id/counter',
-    {
-      schema: {
-        tags: ['Post'],
-        params: PostIdParamsSchema,
-        body: PostUpdateCounterBodySchema,
-        response: { 200: SuccessResponseSchema(PostIdParamsSchema) },
-      },
-    },
-    async (request, reply) => {
-      const result = await postController.updateCounter(request.params, request.body);
-      return reply.code(200).send(success(result));
-    },
-  );
+  // fastify.patch(
+  //   '/:id/counter',
+  //   {
+  //     schema: {
+  //       tags: ['Post'],
+  //       params: PostIdParamsSchema,
+  //       body: PostUpdateCounterBodySchema,
+  //       response: { 200: SuccessResponseSchema(PostIdParamsSchema) },
+  //     },
+  //   },
+  //   async (request, reply) => {
+  //     const result = await postController.updateCounter(request.params, request.body);
+  //     return reply.code(200).send(success(result));
+  //   },
+  // );
 
   /**
    * DELETE /api/posts/:id

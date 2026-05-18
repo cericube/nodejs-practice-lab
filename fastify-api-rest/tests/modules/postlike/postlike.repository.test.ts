@@ -1,8 +1,32 @@
-import { describe, expect, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, beforeAll, afterAll, beforeEach } from 'vitest';
 import { PostLikeRepository } from '../../../src/modules/postlike/postlike.repository';
 import { prisma } from '../setup';
 import { seedUsers, seedPosts, seedPostLikes } from '../postlike/postlike.seed';
-import { Post, PostLike, User } from '../../../src/generated/client';
+import type { Post, PostLike, User } from '../../../src/generated/client';
+
+function sortUserLikes(likes: PostLike[], sort: 'latest' | 'oldest') {
+  return [...likes].sort((a, b) => {
+    const timeDiff =
+      sort === 'latest'
+        ? b.createdAt.getTime() - a.createdAt.getTime()
+        : a.createdAt.getTime() - b.createdAt.getTime();
+    if (timeDiff !== 0) return timeDiff;
+
+    return b.postId - a.postId;
+  });
+}
+
+function sortPostLikes(likes: PostLike[], sort: 'latest' | 'oldest') {
+  return [...likes].sort((a, b) => {
+    const timeDiff =
+      sort === 'latest'
+        ? b.createdAt.getTime() - a.createdAt.getTime()
+        : a.createdAt.getTime() - b.createdAt.getTime();
+    if (timeDiff !== 0) return timeDiff;
+
+    return b.userId - a.userId;
+  });
+}
 
 describe('PostLikeRepository 좋아요 등록/취소', () => {
   let postAuthorId: number;
@@ -62,8 +86,13 @@ describe('PostLikeRepository 좋아요 등록/취소', () => {
   });
 
   beforeEach(async () => {
-    // 각 테스트마다 좋아요 데이터 초기화
+    // 각 테스트마다 좋아요 데이터와 게시글 카운터를 함께 초기화합니다.
+    // repository가 likeCount를 직접 증감하므로 둘을 같이 맞춰야 테스트가 서로 영향을 주지 않습니다.
     await prisma.postLike.deleteMany();
+    await prisma.post.updateMany({
+      where: { id: { in: postId } },
+      data: { likeCount: 0 },
+    });
   });
 
   //
@@ -71,13 +100,18 @@ describe('PostLikeRepository 좋아요 등록/취소', () => {
   let repo: PostLikeRepository = new PostLikeRepository(prisma);
 
   it('1.좋아요 등록하면 글 id를 반환한다.', async () => {
+    const beforePost = await prisma.post.findUniqueOrThrow({
+      where: { id: postId[0] },
+      select: { likeCount: true },
+    });
+
     const result = await repo.createLike({
       postId: postId[0],
       userId: likeUserId,
     });
-    console.log('result: ', result);
+
     expect(result).toEqual({ postId: postId[0] });
-    //
+
     // 좋아요 등록이 실제로 데이터베이스에 반영되었는지 확인
     const likeInDb = await prisma.postLike.findUnique({
       where: {
@@ -90,9 +124,21 @@ describe('PostLikeRepository 좋아요 등록/취소', () => {
     expect(likeInDb).not.toBeNull();
     expect(likeInDb?.userId).toBe(likeUserId);
     expect(likeInDb?.postId).toBe(postId[0]);
+
+    // repository는 좋아요 생성과 게시글 likeCount 증가를 하나의 트랜잭션으로 처리합니다.
+    const afterPost = await prisma.post.findUniqueOrThrow({
+      where: { id: postId[0] },
+      select: { likeCount: true },
+    });
+    expect(afterPost.likeCount).toBe(beforePost.likeCount + 1);
   });
 
   it('2.존재하지 않는 사용자가 좋아요 등록시 오류를 발생시킨다.', async () => {
+    const beforePost = await prisma.post.findUniqueOrThrow({
+      where: { id: postId[0] },
+      select: { likeCount: true },
+    });
+
     await expect(
       repo.createLike({
         postId: postId[0],
@@ -101,6 +147,13 @@ describe('PostLikeRepository 좋아요 등록/취소', () => {
     ).rejects.toMatchObject({
       code: 'P2025', // Prisma 에러 코드
     });
+
+    // 좋아요 생성이 실패하면 같은 트랜잭션 안의 likeCount 증가도 일어나면 안 됩니다.
+    const afterPost = await prisma.post.findUniqueOrThrow({
+      where: { id: postId[0] },
+      select: { likeCount: true },
+    });
+    expect(afterPost.likeCount).toBe(beforePost.likeCount);
   });
 
   it('3.존재하지 않는 게시글에 좋아요 등록시 오류를 발생시킨다.', async () => {
@@ -115,9 +168,13 @@ describe('PostLikeRepository 좋아요 등록/취소', () => {
   });
 
   it('4.좋아요 취소하면 글 id를 반환한다.', async () => {
-    const created = await repo.createLike({
+    await repo.createLike({
       postId: postId[0],
       userId: likeUserId,
+    });
+    const likedPost = await prisma.post.findUniqueOrThrow({
+      where: { id: postId[0] },
+      select: { likeCount: true },
     });
 
     const result = await repo.deleteLike({
@@ -125,8 +182,8 @@ describe('PostLikeRepository 좋아요 등록/취소', () => {
       userId: likeUserId,
     });
 
-    console.log('result: ', result);
     expect(result).toEqual({ postId: postId[0] });
+
     // 좋아요 취소가 실제로 데이터베이스에서 삭제되었는지 확인
     const likeInDb = await prisma.postLike.findUnique({
       where: {
@@ -137,9 +194,21 @@ describe('PostLikeRepository 좋아요 등록/취소', () => {
       },
     });
     expect(likeInDb).toBeNull();
+
+    // repository는 좋아요 삭제와 게시글 likeCount 감소를 하나의 트랜잭션으로 처리합니다.
+    const afterPost = await prisma.post.findUniqueOrThrow({
+      where: { id: postId[0] },
+      select: { likeCount: true },
+    });
+    expect(afterPost.likeCount).toBe(likedPost.likeCount - 1);
   });
 
   it('5.좋아요 취소시 존재하지 않는 좋아요에 대해 오류를 발생시킨다.', async () => {
+    const beforePost = await prisma.post.findUniqueOrThrow({
+      where: { id: postId[0] },
+      select: { likeCount: true },
+    });
+
     await expect(
       repo.deleteLike({
         postId: 111, // 존재하지 않는 게시글
@@ -148,13 +217,24 @@ describe('PostLikeRepository 좋아요 등록/취소', () => {
     ).rejects.toMatchObject({
       code: 'P2025', // Prisma 에러 코드
     });
+
+    const afterPost = await prisma.post.findUniqueOrThrow({
+      where: { id: postId[0] },
+      select: { likeCount: true },
+    });
+    expect(afterPost.likeCount).toBe(beforePost.likeCount);
   });
 
   it('6.본인이 등록하지 않은 좋아요 취소 요청시 오류를 발생시킨다.', async () => {
-    const created = await repo.createLike({
+    await repo.createLike({
       postId: postId[0],
       userId: likeUserId,
     });
+    const beforeFailedDelete = await prisma.post.findUniqueOrThrow({
+      where: { id: postId[0] },
+      select: { likeCount: true },
+    });
+
     await expect(
       repo.deleteLike({
         postId: postId[0],
@@ -163,6 +243,13 @@ describe('PostLikeRepository 좋아요 등록/취소', () => {
     ).rejects.toMatchObject({
       code: 'P2025', // Prisma 에러 코드
     });
+
+    // 삭제 대상 좋아요가 없으면 likeCount도 감소하면 안 됩니다.
+    const afterFailedDelete = await prisma.post.findUniqueOrThrow({
+      where: { id: postId[0] },
+      select: { likeCount: true },
+    });
+    expect(afterFailedDelete.likeCount).toBe(beforeFailedDelete.likeCount);
   });
 });
 
@@ -200,18 +287,13 @@ describe('PostLikeRepository 목록조회', () => {
     // -----------------------------
     // 검증용 데이터 생성
     // -----------------------------
-    //1. 해당 유저의 like만 추출
-    const userLikes = likes.filter((l) => l.userId === userId);
-    //2. 정렬 (createdAt desc, postId desc)
-    const sortedLikes = userLikes.sort((a, b) => {
-      const timeDiff = b.createdAt.getTime() - a.createdAt.getTime();
-      if (timeDiff !== 0) return timeDiff;
-
-      // tie-break
-      return b.postId - a.postId;
-    });
-    //3.페이지 사이즈만큼 자르기
-    const pagedLikes = sortedLikes.slice(0, take);
+    //1. 해당 유저의 like만 추출 후 repository와 같은 조건(createdAt desc, postId desc)으로 정렬
+    const sortedLikes = sortUserLikes(
+      likes.filter((l) => l.userId === userId),
+      'latest',
+    );
+    //2. repository는 다음 페이지 존재 여부 확인을 위해 take + 1개를 반환한다.
+    const pagedLikes = sortedLikes.slice(0, take + 1);
     // 4. post 정보 join (expected 형태 만들기)
     const expected = pagedLikes.map((like) => {
       const post = posts.find((p) => p.id === like.postId)!;
@@ -230,7 +312,7 @@ describe('PostLikeRepository 목록조회', () => {
     //  첫페이지  검증
     // -----------------------------
     // 길이 검증
-    expect(result).toHaveLength(expected.length + 1);
+    expect(result).toHaveLength(expected.length);
     // 데이터 검증
     for (let i = 0; i < expected.length; i++) {
       expect(result[i].post.id).toBe(expected[i].post.id);
@@ -258,7 +340,7 @@ describe('PostLikeRepository 목록조회', () => {
     });
 
     // 3. 다음 페이지 검증
-    const nextExpected = sortedLikes.slice(take, take * 2).map((like) => {
+    const nextExpected = sortedLikes.slice(take, take * 2 + 1).map((like) => {
       const post = posts.find((p) => p.id === like.postId)!;
 
       return {
@@ -272,9 +354,7 @@ describe('PostLikeRepository 목록조회', () => {
     });
 
     // 길이 검증
-    if (nextExpected.length > take) {
-      expect(nextResult).toHaveLength(take + 1); // 다음 페이지 존재 여부 확인용
-    }
+    expect(nextResult).toHaveLength(nextExpected.length);
     // 데이터 검증
     for (let i = 0; i < nextExpected.length; i++) {
       expect(nextResult[i].post.id).toBe(nextExpected[i].post.id);
@@ -284,13 +364,39 @@ describe('PostLikeRepository 목록조회', () => {
       expect(new Date(nextResult[i].createdAt).getTime()).toBe(nextExpected[i].createdAt.getTime());
     }
 
-    // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-    // console.log(result);
-    // console.log('next page >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-    // console.log(nextResult);
   });
 
-  it('2.게시글이 좋아요 등록한 사용자를 페이징하여 조회한다.', async () => {
+  it('2.내가 좋아요한 게시글 목록을 오래된 순서로 조회하고 커서를 적용한다.', async () => {
+    const userId = users[0].id;
+    const take = 4;
+    const sortedLikes = sortUserLikes(
+      likes.filter((l) => l.userId === userId),
+      'oldest',
+    );
+
+    const result = await repo.listUserLikedPosts(userId, {
+      sort: 'oldest',
+      take,
+    });
+
+    const firstExpected = sortedLikes.slice(0, take + 1);
+    expect(result.map((row) => row.post.id)).toEqual(firstExpected.map((like) => like.postId));
+
+    const lastVisible = result[take - 1];
+    const nextResult = await repo.listUserLikedPosts(userId, {
+      sort: 'oldest',
+      take,
+      cursor: {
+        createdAt: lastVisible.createdAt.toISOString(),
+        value: lastVisible.post.id,
+      },
+    });
+
+    const nextExpected = sortedLikes.slice(take, take * 2 + 1);
+    expect(nextResult.map((row) => row.post.id)).toEqual(nextExpected.map((like) => like.postId));
+  });
+
+  it('3.게시글이 좋아요 등록한 사용자를 페이징하여 조회한다.', async () => {
     const postId = posts[0].id;
     const take = 3;
     const result = await repo.listPostLikedUsers(postId, {
@@ -301,17 +407,13 @@ describe('PostLikeRepository 목록조회', () => {
     // -----------------------------
     // 검증용 데이터 생성
     // -----------------------------
-    //1. 게시글에 좋아요한 like만 추출
-    const postLikes = likes.filter((l) => l.postId === postId);
-    //2. 정렬 (createdAt desc, userId desc)
-    const sortedLikes = postLikes.sort((a, b) => {
-      const timeDiff = b.createdAt.getTime() - a.createdAt.getTime();
-      if (timeDiff !== 0) return timeDiff;
-      // tie-break
-      return b.userId - a.userId;
-    });
-    //3.페이지 사이즈만큼 자르기
-    const pagedLikes = sortedLikes.slice(0, take);
+    //1. 게시글에 좋아요한 like만 추출 후 repository와 같은 조건(createdAt desc, userId desc)으로 정렬
+    const sortedLikes = sortPostLikes(
+      likes.filter((l) => l.postId === postId),
+      'latest',
+    );
+    //2. repository는 다음 페이지 존재 여부 확인을 위해 take + 1개를 반환한다.
+    const pagedLikes = sortedLikes.slice(0, take + 1);
     // 4. user 정보 join (expected 형태 만들기)
     const expected = pagedLikes.map((like) => {
       const user = users.find((u) => u.id === like.userId)!;
@@ -329,9 +431,7 @@ describe('PostLikeRepository 목록조회', () => {
     //  첫페이지  검증
     // -----------------------------
     // 길이 검증
-    if (result.length > take) {
-      expect(result).toHaveLength(take + 1);
-    }
+    expect(result).toHaveLength(expected.length);
     // 데이터 검증
     for (let i = 0; i < expected.length; i++) {
       expect(result[i].user.id).toBe(expected[i].user.id);
@@ -340,8 +440,36 @@ describe('PostLikeRepository 목록조회', () => {
       expect(new Date(result[i].createdAt).getTime()).toBe(expected[i].createdAt.getTime());
     }
 
-    // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-    // console.log(result);
-    // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+  });
+
+  it('4.게시글에 좋아요한 사용자 목록을 오래된 순서로 조회하고 커서를 적용한다.', async () => {
+    const targetPostId = posts.find((post) => likes.filter((like) => like.postId === post.id).length >= 3)!
+      .id;
+    const take = 2;
+    const sortedLikes = sortPostLikes(
+      likes.filter((l) => l.postId === targetPostId),
+      'oldest',
+    );
+
+    const result = await repo.listPostLikedUsers(targetPostId, {
+      sort: 'oldest',
+      take,
+    });
+
+    const firstExpected = sortedLikes.slice(0, take + 1);
+    expect(result.map((row) => row.user.id)).toEqual(firstExpected.map((like) => like.userId));
+
+    const lastVisible = result[take - 1];
+    const nextResult = await repo.listPostLikedUsers(targetPostId, {
+      sort: 'oldest',
+      take,
+      cursor: {
+        createdAt: lastVisible.createdAt.toISOString(),
+        value: lastVisible.user.id,
+      },
+    });
+
+    const nextExpected = sortedLikes.slice(take, take * 2 + 1);
+    expect(nextResult.map((row) => row.user.id)).toEqual(nextExpected.map((like) => like.userId));
   });
 });

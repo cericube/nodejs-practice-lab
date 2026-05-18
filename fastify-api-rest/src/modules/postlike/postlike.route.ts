@@ -38,6 +38,7 @@ import {
 export const postLikeRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   const prisma = fastify.prisma;
   const repository = new PostLikeRepository(prisma);
+  // Service와 Controller 인스턴스를 생성합니다.
   const service = new PostLikeService(repository);
   const controller = new PostLikeController(service);
 

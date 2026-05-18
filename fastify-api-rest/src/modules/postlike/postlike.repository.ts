@@ -22,33 +22,55 @@ export class PostLikeRepository {
    * 특정 사용자가 특정 게시글에 좋아요를 누름
    */
   async createLike(data: { postId: number; userId: number }) {
-    return this.prisma.postLike.create({
-      data: {
-        user: { connect: { id: data.userId } },
-        post: { connect: { id: data.postId } },
-      },
-      select: { postId: true },
+    return this.prisma.$transaction(async (tx) => {
+      const like = await tx.postLike.create({
+        data: {
+          user: { connect: { id: data.userId } },
+          post: { connect: { id: data.postId } },
+        },
+        select: { postId: true },
+      });
+
+      // 좋아요 카운터 증가
+      await tx.post.update({
+        where: { id: data.postId },
+        data: { likeCount: { increment: 1 } },
+        select: { id: true },
+      });
+
+      return like;
     });
   }
 
   /**
    * [좋아요 취소]
-   * @@id([userId, postId]) 복합 키를 사용하여 유일한 행을 찾아 삭제
+   * userId와 postId 복합 키로 좋아요 항목을 조회하여 삭제하고,
+   * 삭제가 성공하면 해당 게시글의 좋아요 수를 1 감소시킵니다.
    */
   async deleteLike(data: { postId: number; userId: number }) {
     // Prisma 스키마에서 @@id([userId, postId])라고 정의하면,
     // Prisma는 내부적으로 이 두 값을 합친
     // userId_postId라는 이름을 가진 하나의 고유 식별자(Compound Unique Input)를 생성합니다.
     //
-    return this.prisma.postLike.delete({
-      where: {
-        // Prisma는 복합 PK 정의 시 자동으로 'field1_field2' 형태의 고유 식별자 객체를 생성함
-        userId_postId: {
-          userId: data.userId,
-          postId: data.postId,
+    return this.prisma.$transaction(async (tx) => {
+      const like = await tx.postLike.delete({
+        where: {
+          userId_postId: {
+            userId: data.userId,
+            postId: data.postId,
+          },
         },
-      },
-      select: { postId: true },
+        select: { postId: true },
+      });
+
+      // 좋아요 카운터 감소
+      await tx.post.update({
+        where: { id: data.postId },
+        data: { likeCount: { decrement: 1 } },
+        select: { id: true },
+      });
+
+      return like;
     });
   }
 

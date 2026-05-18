@@ -6,8 +6,9 @@ import { ReplyService } from '../../../src/modules/reply/reply.service';
 import { prisma } from '../setup';
 import { ReplyRepository } from '../../../src/modules/reply/reply.repository';
 import { Prisma, Reply } from '../../../src/generated/client';
-import { BusinessError } from '../../../src/common/errors/busuness.error';
 import { ErrorCode } from '../../../src/common/errors/error.codes';
+import { BusinessError } from '../../../src/common/errors/business.error';
+import { PostRepository } from '../../../src/modules/post/post.repository';
 
 function isDateTime(value: string) {
   return !Number.isNaN(Date.parse(value));

@@ -198,60 +198,60 @@ describe('PostRoute 테스트(CRUD) ', () => {
     expect(json).toHaveProperty('code', 'NOT_FOUND');
   });
 
-  it('7.게시글 카운터(view/like/reply)는 기존 값에 누적된다 (incremental update)', async () => {
-    // 글 등록
-    const created = await getCreatedPost(postAuthorId);
+  // it('7.게시글 카운터(view/like/reply)는 기존 값에 누적된다 (incremental update)', async () => {
+  //   // 글 등록
+  //   const created = await getCreatedPost(postAuthorId);
 
-    // 공개글만 count 하니까 공개로 전환해야 한다.
-    const updated = await app.inject({
-      method: 'PATCH',
-      url: `/api/posts/${created.id}`,
-      payload: {
-        published: true,
-      },
-    });
+  //   // 공개글만 count 하니까 공개로 전환해야 한다.
+  //   const updated = await app.inject({
+  //     method: 'PATCH',
+  //     url: `/api/posts/${created.id}`,
+  //     payload: {
+  //       published: true,
+  //     },
+  //   });
 
-    // 첫번째 갱신
-    const counted1 = await app.inject({
-      method: 'PATCH',
-      url: `/api/posts/${created.id}/counter`,
-      payload: {
-        viewCount: 100,
-        likeCount: 39,
-        replyCount: 10, // test 용
-      },
-    });
+  //   // 첫번째 갱신
+  //   const counted1 = await app.inject({
+  //     method: 'PATCH',
+  //     url: `/api/posts/${created.id}/counter`,
+  //     payload: {
+  //       viewCount: 100,
+  //       likeCount: 39,
+  //       replyCount: 10, // test 용
+  //     },
+  //   });
 
-    // 누적 테스트
-    const counted = await app.inject({
-      method: 'PATCH',
-      url: `/api/posts/${created.id}/counter`,
-      payload: {
-        viewCount: 2,
-        likeCount: -4,
-        replyCount: 7, // test 용
-      },
-    });
+  //   // 누적 테스트
+  //   const counted = await app.inject({
+  //     method: 'PATCH',
+  //     url: `/api/posts/${created.id}/counter`,
+  //     payload: {
+  //       viewCount: 2,
+  //       likeCount: -4,
+  //       replyCount: 7, // test 용
+  //     },
+  //   });
 
-    expect(counted.statusCode).toBe(200);
-    const json = counted.json();
-    expect(json).toHaveProperty('success', true);
-    expect(json.body).toHaveProperty('id');
+  //   expect(counted.statusCode).toBe(200);
+  //   const json = counted.json();
+  //   expect(json).toHaveProperty('success', true);
+  //   expect(json.body).toHaveProperty('id');
 
-    // 결과 확인
-    // 조회시 viewCount +1 갱신된다.
-    const post = await app.inject({
-      method: 'GET',
-      url: `/api/posts?id=${json.body.id}&includeDraft=true`, //미공개도 포함해야 오류 아남
-    });
-    expect(post.statusCode).toBe(200);
-    const postJson = post.json();
-    expect(postJson).toHaveProperty('success', true);
-    expect(postJson).toHaveProperty('body');
-    expect(postJson.body).toHaveProperty('viewCount', 103); //100 + 2 , +1(조회시)
-    expect(postJson.body).toHaveProperty('likeCount', 35); //39 + -4
-    expect(postJson.body).toHaveProperty('replyCount', 17); // 10 + 7
-  });
+  //   // 결과 확인
+  //   // 조회시 viewCount +1 갱신된다.
+  //   const post = await app.inject({
+  //     method: 'GET',
+  //     url: `/api/posts?id=${json.body.id}&includeDraft=true`, //미공개도 포함해야 오류 아남
+  //   });
+  //   expect(post.statusCode).toBe(200);
+  //   const postJson = post.json();
+  //   expect(postJson).toHaveProperty('success', true);
+  //   expect(postJson).toHaveProperty('body');
+  //   expect(postJson.body).toHaveProperty('viewCount', 103); //100 + 2 , +1(조회시)
+  //   expect(postJson.body).toHaveProperty('likeCount', 35); //39 + -4
+  //   expect(postJson.body).toHaveProperty('replyCount', 17); // 10 + 7
+  // });
 
   it('8.게시글 삭제시, 성공 응답 객체를 반환해야 한다.', async () => {
     // 글 등록

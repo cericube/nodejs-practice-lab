@@ -26,8 +26,10 @@ export class PostLikeService {
    * - 중복 좋아요 여부 및 무결성 검사는 Repository 레벨에서 처리됩니다.
    * - 클라이언트에는 식별자(postId)만 반환하여 응답 payload를 최소화합니다.
    */
-  likePost(input: PostLikeParamsDto): Promise<{ postId: number }> {
+  async likePost(input: PostLikeParamsDto): Promise<{ postId: number }> {
     return this.repository.createLike({ postId: input.postId, userId: input.userId });
+    // // await this.postRepository.updateCounters({ postId: result.postId, likeCount: 1 }); // 좋아요 카운터 증가
+    // return result;
   }
 
   /**
@@ -36,8 +38,10 @@ export class PostLikeService {
    * - 존재하지 않는 좋아요에 대한 처리(무시/에러)는 Repository 정책에 따릅니다.
    * - 결과로 대상 게시글 식별자(postId)만 반환합니다.
    */
-  unlikePost(input: PostLikeParamsDto): Promise<{ postId: number }> {
+  async unlikePost(input: PostLikeParamsDto): Promise<{ postId: number }> {
     return this.repository.deleteLike({ postId: input.postId, userId: input.userId });
+    // await this.postRepository.updateCounters({ postId: result.postId, likeCount: -1 }); // 좋아요 카운터 감소
+    // return result;
   }
 
   /**

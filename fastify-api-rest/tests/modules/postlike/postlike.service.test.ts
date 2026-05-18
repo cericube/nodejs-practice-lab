@@ -5,6 +5,7 @@ import { prisma } from '../setup';
 import { seedUsers, seedPosts, seedPostLikes } from '../postlike/postlike.seed';
 import { PostLikeRepository } from '../../../src/modules/postlike/postlike.repository';
 import { Post, PostLike, Prisma, User } from '../../../src/generated/client';
+import { PostRepository } from '../../../src/modules/post/post.repository';
 
 function isDateTime(value: string) {
   return !Number.isNaN(Date.parse(value));

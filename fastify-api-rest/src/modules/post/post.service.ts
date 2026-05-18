@@ -82,18 +82,18 @@ export class PostService {
    * - Race Condition을 방지하기 위해 서비스 계층의 연산 대신 DB의 원자적 증가(Atomic Increment)를 사용합니다.
    * - 데이터 무결성을 위해 Repository가 이 원자적 연산을 수행하도록 위임합니다.
    */
-  async updateCounter(
-    id: PostIdParamsDto,
-    input: PostUpdateCounterBodyDto,
-  ): Promise<PostIdParamsDto> {
-    const data = {
-      postId: id.id,
-      ...(input.viewCount !== undefined && { viewCount: input.viewCount }),
-      ...(input.likeCount !== undefined && { likeCount: input.likeCount }),
-      ...(input.replyCount !== undefined && { replyCount: input.replyCount }),
-    };
-    return await this.repository.updateCounters(data);
-  }
+  // async updateCounter(
+  //   id: PostIdParamsDto,
+  //   input: PostUpdateCounterBodyDto,
+  // ): Promise<PostIdParamsDto> {
+  //   const data = {
+  //     postId: id.id,
+  //     ...(input.viewCount !== undefined && { viewCount: input.viewCount }),
+  //     ...(input.likeCount !== undefined && { likeCount: input.likeCount }),
+  //     ...(input.replyCount !== undefined && { replyCount: input.replyCount }),
+  //   };
+  //   return await this.repository.updateCounters(data);
+  // }
 
   /**
    * 게시글 삭제
@@ -127,11 +127,10 @@ export class PostService {
    */
   async getPost(input: PostQueryDto): Promise<PostResponseDto> {
     const { id: postId, includeDraft = false } = input;
-    //TODO: 고성능으로 설계 변경 필요.
     // await 없으면, 잠재적으로
     // No record was found for an update 오류날 가능성 있음
     // 오류 무시함.
-    await this.updateCounter({ id: postId }, { viewCount: 1 }).catch(() => []);
+    //await this.updateCounter({ id: postId }, { viewCount: 1 }).catch(() => []);
 
     const post = await this.repository.selectOne({ postId, includeDraft });
 

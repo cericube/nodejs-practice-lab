@@ -162,31 +162,31 @@ export class PostRepository {
    *   행 재작성 자체의 비용 증가는 미미합니다. 다만 인덱스 업데이트 여부 판단 비용이
    *   소폭 늘어날 수 있으므로, 카운터 컬럼에는 인덱스를 최소화하는 것이 좋습니다.
    */
-  async updateCounters(data: {
-    postId: number;
-    viewCount?: number;
-    likeCount?: number;
-    replyCount?: number;
-  }) {
-    return this.prisma.post.update({
-      where: {
-        id: data.postId,
-        published: true,
-      },
-      data: {
-        ...(data.viewCount !== undefined && {
-          viewCount: { increment: data.viewCount },
-        }),
-        ...(data.likeCount !== undefined && {
-          likeCount: { increment: data.likeCount },
-        }),
-        ...(data.replyCount !== undefined && {
-          replyCount: { increment: data.replyCount },
-        }),
-      },
-      select: { id: true },
-    });
-  }
+  // async updateCounters(data: {
+  //   postId: number;
+  //   viewCount?: number;
+  //   likeCount?: number;
+  //   replyCount?: number;
+  // }) {
+  //   return this.prisma.post.update({
+  //     where: {
+  //       id: data.postId,
+  //       published: true,
+  //     },
+  //     data: {
+  //       ...(data.viewCount !== undefined && {
+  //         viewCount: { increment: data.viewCount },
+  //       }),
+  //       ...(data.likeCount !== undefined && {
+  //         likeCount: { increment: data.likeCount },
+  //       }),
+  //       ...(data.replyCount !== undefined && {
+  //         replyCount: { increment: data.replyCount },
+  //       }),
+  //     },
+  //     select: { id: true },
+  //   });
+  // }
 
   /**
    * 게시글을 물리적으로 삭제합니다.
@@ -218,12 +218,23 @@ export class PostRepository {
   async selectOne(data: { postId: number; includeDraft?: boolean }) {
     const { postId, includeDraft = false } = data;
 
-    return this.prisma.post.findUniqueOrThrow({
-      where: {
-        id: postId,
-        ...(includeDraft === false && { published: true }),
-      },
-      select: postDetailSelect,
+    return this.prisma.$transaction(async (tx) => {
+      // 조회수 증가 (공개글에 한해서)
+      if (!includeDraft) {
+        await tx.post.update({
+          where: { id: postId, published: true },
+          data: { viewCount: { increment: 1 } },
+          select: { id: true },
+        });
+      }
+
+      return tx.post.findUniqueOrThrow({
+        where: {
+          id: postId,
+          ...(includeDraft === false && { published: true }),
+        },
+        select: postDetailSelect,
+      });
     });
   }
 

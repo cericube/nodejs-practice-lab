@@ -217,60 +217,60 @@ describe('PostRepository.update/updateCounters', () => {
     }
   });
 
-  it('5. 공개글 조회수, 좋아요, 댓글 수 를 각 각 증가후 결과를 확인한다.', async () => {
-    const updated = await repo.update({
-      postId,
-      published: true,
-    });
+  // it('5. 공개글 조회수, 좋아요, 댓글 수 를 각 각 증가후 결과를 확인한다.', async () => {
+  //   const updated = await repo.update({
+  //     postId,
+  //     published: true,
+  //   });
 
-    const result = await repo.updateCounters({
-      postId: postId,
-      viewCount: 4,
-      likeCount: 6,
-      replyCount: 10,
-    });
-    expect(result).toBeDefined();
-    expect(result.id).toBe(postId);
+  //   const result = await repo.updateCounters({
+  //     postId: postId,
+  //     viewCount: 4,
+  //     likeCount: 6,
+  //     replyCount: 10,
+  //   });
+  //   expect(result).toBeDefined();
+  //   expect(result.id).toBe(postId);
 
-    // 수정된 데이터가 DB에 실제로 반영되었는지 확인
-    const updatedPost = await prisma.post.findUnique({ where: { id: postId } });
-    console.log('Updated Post:', updatedPost);
-    expect(updatedPost).toBeDefined();
-    expect(updatedPost?.viewCount).toBe(4);
-    expect(updatedPost?.likeCount).toBe(6);
-    expect(updatedPost?.replyCount).toBe(10);
+  //   // 수정된 데이터가 DB에 실제로 반영되었는지 확인
+  //   const updatedPost = await prisma.post.findUnique({ where: { id: postId } });
+  //   console.log('Updated Post:', updatedPost);
+  //   expect(updatedPost).toBeDefined();
+  //   expect(updatedPost?.viewCount).toBe(4);
+  //   expect(updatedPost?.likeCount).toBe(6);
+  //   expect(updatedPost?.replyCount).toBe(10);
 
-    // 추가로, viewCount만 증가시키는 경우
-    const result2 = await repo.updateCounters({
-      postId,
-      viewCount: 2,
-    });
-    expect(result2).toBeDefined();
-    expect(result2.id).toBe(postId);
+  //   // 추가로, viewCount만 증가시키는 경우
+  //   const result2 = await repo.updateCounters({
+  //     postId,
+  //     viewCount: 2,
+  //   });
+  //   expect(result2).toBeDefined();
+  //   expect(result2.id).toBe(postId);
 
-    const updatedPost2 = await prisma.post.findUnique({ where: { id: postId } });
-    console.log('Updated Post after viewCount increment:', updatedPost2);
-    expect(updatedPost2).toBeDefined();
-    expect(updatedPost2?.viewCount).toBe(6); // 4 + 2
-    expect(updatedPost2?.likeCount).toBe(6); // 변경 없음
-    expect(updatedPost2?.replyCount).toBe(10); // 변경 없음
+  //   const updatedPost2 = await prisma.post.findUnique({ where: { id: postId } });
+  //   console.log('Updated Post after viewCount increment:', updatedPost2);
+  //   expect(updatedPost2).toBeDefined();
+  //   expect(updatedPost2?.viewCount).toBe(6); // 4 + 2
+  //   expect(updatedPost2?.likeCount).toBe(6); // 변경 없음
+  //   expect(updatedPost2?.replyCount).toBe(10); // 변경 없음
 
-    // 좋아요와 댓글을 감소 시키는 경우 (음수 값 테스트)
-    const result3 = await repo.updateCounters({
-      postId,
-      likeCount: -2,
-      replyCount: -5,
-    });
-    expect(result3).toBeDefined();
-    expect(result3.id).toBe(postId);
+  //   // 좋아요와 댓글을 감소 시키는 경우 (음수 값 테스트)
+  //   const result3 = await repo.updateCounters({
+  //     postId,
+  //     likeCount: -2,
+  //     replyCount: -5,
+  //   });
+  //   expect(result3).toBeDefined();
+  //   expect(result3.id).toBe(postId);
 
-    const updatedPost3 = await prisma.post.findUnique({ where: { id: postId } });
-    console.log('Updated Post after likeCount and replyCount decrement:', updatedPost3);
-    expect(updatedPost3).toBeDefined();
-    expect(updatedPost3?.viewCount).toBe(6); // 변경 없음
-    expect(updatedPost3?.likeCount).toBe(4); // 6 - 2
-    expect(updatedPost3?.replyCount).toBe(5); // 10 - 5
-  });
+  //   const updatedPost3 = await prisma.post.findUnique({ where: { id: postId } });
+  //   console.log('Updated Post after likeCount and replyCount decrement:', updatedPost3);
+  //   expect(updatedPost3).toBeDefined();
+  //   expect(updatedPost3?.viewCount).toBe(6); // 변경 없음
+  //   expect(updatedPost3?.likeCount).toBe(4); // 6 - 2
+  //   expect(updatedPost3?.replyCount).toBe(5); // 10 - 5
+  // });
 });
 
 describe('PostRepository.delete', () => {

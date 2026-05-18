@@ -32,14 +32,14 @@ export class PostController {
     return this.postService.updatePost(ids, input);
   }
 
-  /**
-   * 게시글의 카운터 값을 수정
-   * - 조회수(viewCount), 좋아요(likeCount) 등의 카운터 필드 갱신
-   * - 전체 게시글 수정과 분리하여 경량 업데이트 수행 (PATCH counter 대응)
-   */
-  updateCounter(id: PostIdParamsDto, input: PostUpdateCounterBodyDto): Promise<PostIdParamsDto> {
-    return this.postService.updateCounter(id, input);
-  }
+  // /**
+  //  * 게시글의 카운터 값을 수정
+  //  * - 조회수(viewCount), 좋아요(likeCount) 등의 카운터 필드 갱신
+  //  * - 전체 게시글 수정과 분리하여 경량 업데이트 수행 (PATCH counter 대응)
+  //  */
+  // updateCounter(id: PostIdParamsDto, input: PostUpdateCounterBodyDto): Promise<PostIdParamsDto> {
+  //   return this.postService.updateCounter(id, input);
+  // }
 
   /** 게시글을 시스템상에서 '삭제' 상태로 변경 (Soft delete, DELETE 대응) */
   deletePost(ids: PostIdParamsDto, input: PostDeleteQueryDto): Promise<PostUpdateResponseDto> {

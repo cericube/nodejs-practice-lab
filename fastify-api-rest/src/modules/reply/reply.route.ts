@@ -17,6 +17,7 @@ import {
   ReplyUpdateBodySchema,
   ReplyUpdateResponseSchema,
 } from './reply.dto';
+import { PostRepository } from '../post/post.repository';
 
 /**
  * [Route Layer: 인터페이스 및 검증 계층]

@@ -92,17 +92,28 @@ export class ReplyRepository {
    * - connect 대상(id)이 존재하지 않으면 예외 발생 (RecordNotFound)
    */
   async create(data: { postId: number; authorId: number; content: string }) {
-    return this.prisma.reply.create({
-      data: {
-        author: {
-          connect: { id: data.authorId },
+    return this.prisma.$transaction(async (tx) => {
+      const reply = await tx.reply.create({
+        data: {
+          author: {
+            connect: { id: data.authorId },
+          },
+          post: {
+            connect: { id: data.postId },
+          },
+          content: data.content,
         },
-        post: {
-          connect: { id: data.postId },
-        },
-        content: data.content,
-      },
-      select: replyUpdateSelect,
+        select: replyUpdateSelect,
+      });
+
+      // 댓글 카운터 증가
+      await tx.post.update({
+        where: { id: data.postId },
+        data: { replyCount: { increment: 1 } },
+        select: { id: true },
+      });
+
+      return reply;
     });
   }
 
@@ -137,13 +148,24 @@ export class ReplyRepository {
    * authorId가 있을 때만 WHERE 조건에 포함됩니다.
    */
   async delete(data: { id: number; authorId?: number }) {
-    return this.prisma.reply.delete({
-      where: {
-        id: data.id,
-        // 본인 댓글만 삭제할 수 있도록 조건 추가 (관리자 고려  authorId optional 처리)
-        ...(data.authorId !== undefined && { authorId: data.authorId }),
-      },
-      select: replyUpdateSelect,
+    return this.prisma.$transaction(async (tx) => {
+      const reply = await tx.reply.delete({
+        where: {
+          id: data.id,
+          // 본인 댓글만 삭제할 수 있도록 조건 추가 (관리자 고려  authorId optional 처리)
+          ...(data.authorId !== undefined && { authorId: data.authorId }),
+        },
+        select: replyUpdateSelect,
+      });
+
+      // 댓글 카운터 감소
+      await tx.post.update({
+        where: { id: reply.postId },
+        data: { replyCount: { decrement: 1 } },
+        select: { id: true },
+      });
+
+      return reply;
     });
   }
 

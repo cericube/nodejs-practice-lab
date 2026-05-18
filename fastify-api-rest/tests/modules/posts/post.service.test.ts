@@ -128,23 +128,23 @@ describe('PostService : 기본 CRUD', () => {
     ).rejects.toMatchObject({ code: 'P2025' });
   });
 
-  it('6.카운터 데이터 갱신 시, 최소한의 식별 정보(id)를 포함한 응답 포맷을 유지해야 한다.', async () => {
-    const post = await service.createPost({
-      title: '타이틀',
-      authorId: authorId,
-      published: true, // 공개글 이어야지 count를 증가 시킬 수 있다.
-    });
+  // it('6.카운터 데이터 갱신 시, 최소한의 식별 정보(id)를 포함한 응답 포맷을 유지해야 한다.', async () => {
+  //   const post = await service.createPost({
+  //     title: '타이틀',
+  //     authorId: authorId,
+  //     published: true, // 공개글 이어야지 count를 증가 시킬 수 있다.
+  //   });
 
-    const updated = await service.updateCounter(
-      {
-        id: post.id,
-      },
-      {
-        likeCount: 3, //3 만큼 증가 시킨다.
-      },
-    );
-    expect(updated).toHaveProperty('id', post.id);
-  });
+  //   const updated = await service.updateCounter(
+  //     {
+  //       id: post.id,
+  //     },
+  //     {
+  //       likeCount: 3, //3 만큼 증가 시킨다.
+  //     },
+  //   );
+  //   expect(updated).toHaveProperty('id', post.id);
+  // });
   //
 
   it('7.게시글 삭제 시, 삭제된 레코드의 최종 상태값을 포함한 응답을 반환해야 한다.', async () => {

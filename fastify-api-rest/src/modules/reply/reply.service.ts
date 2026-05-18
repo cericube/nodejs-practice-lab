@@ -23,7 +23,6 @@ import { ReplyRepository } from './reply.repository';
  */
 export class ReplyService {
   constructor(private readonly repository: ReplyRepository) {}
-
   /**
    * 댓글 생성
    * [데이터 처리]
@@ -35,7 +34,9 @@ export class ReplyService {
       throw new BusinessError(ErrorCode.VALIDATION_ERROR, 'content is empty', 400);
     }
 
+    //트랜잭션  처리해야 해.. 2026.05 15
     const reply = await this.repository.create(input);
+    // await this.postRepository.updateCounters({ postId: reply.postId, replyCount: 1 }); // 댓글 카운터 증가
     return toResponse(reply);
   }
 
@@ -78,6 +79,7 @@ export class ReplyService {
       id: replyId.id,
       ...(input.authorId !== undefined && { authorId: input.authorId }),
     });
+    // await this.postRepository.updateCounters({ postId: reply.postId, replyCount: -1 }); // 댓글 카운터 감소
     return toResponse(reply);
   }
 
