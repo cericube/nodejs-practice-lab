@@ -1,4 +1,4 @@
-// src/module/postfile/postfile.dto.ts
+// src/modules/postfile/postfile.dto.ts
 
 import { Type, type Static } from '@sinclair/typebox';
 
@@ -50,9 +50,7 @@ export const PostFilesBodySchema = Type.Object(
 
 export type PostFilesBodyDto = Static<typeof PostFilesBodySchema>;
 
-/////////////////////////
-// TODO 아래 코드 수정해 야 함.
-
+// 다운로드 응답은 stream 본문과 HTTP header로 내려가므로, 이 스키마는 서비스 내부 메타데이터 타입으로 사용합니다.
 export const PostFileDownloadMetaSchema = Type.Object(
   {
     fileName: Type.String(),

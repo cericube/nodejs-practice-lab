@@ -1,4 +1,4 @@
-// src/module/reply/reply.route.ts
+// src/modules/reply/reply.route.ts
 
 import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 

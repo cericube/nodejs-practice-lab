@@ -1,4 +1,4 @@
-// src/module/reply/reply.service.ts
+// src/modules/reply/reply.service.ts
 
 import { BusinessError } from '../../common/errors/business.error';
 import { ErrorCode } from '../../common/errors/error.codes';
@@ -19,7 +19,7 @@ import { ReplyRepository } from './reply.repository';
  * 애플리케이션의 핵심 비즈니스 로직을 담당하는 서비스 계층입니다.
  * - Controller와 Repository 사이의 가교 역할을 수행합니다.
  * - DB Entity를 API 응답 스펙(DTO)으로 변환하여 내부 데이터 구조 노출을 차단합니다.
- * - 모든 데이터 조작은 권한 검증 및 비즈니스 규칙을 기반으로 수행되어야 합니다.
+ * - 현재 인증 계층이 없으므로 작성자 검증은 요청 DTO의 authorId를 Repository 조건에 전달하는 방식입니다.
  */
 export class ReplyService {
   constructor(private readonly repository: ReplyRepository) {}
@@ -34,9 +34,7 @@ export class ReplyService {
       throw new BusinessError(ErrorCode.VALIDATION_ERROR, 'content is empty', 400);
     }
 
-    //트랜잭션  처리해야 해.. 2026.05 15
     const reply = await this.repository.create(input);
-    // await this.postRepository.updateCounters({ postId: reply.postId, replyCount: 1 }); // 댓글 카운터 증가
     return toResponse(reply);
   }
 
@@ -47,7 +45,8 @@ export class ReplyService {
    * - 불필요한 데이터 overwrite를 방지하기 위해 DTO 기반으로 제한된 필드만 전달
    *
    * [권한 정책]
-   * - authorId 기반으로 본인글만 수정 수행
+   * - 현재는 요청 Body의 authorId를 Repository 조건에 전달해 본인 댓글 여부를 확인합니다.
+   * - 인증 도입 후에는 클라이언트가 보낸 authorId 대신 인증 컨텍스트를 사용해야 합니다.
    */
   async updateReply(
     replyId: ReplyIdParamsDto,
@@ -68,9 +67,10 @@ export class ReplyService {
   /**
    * 댓글 삭제
    * [보안 및 권한]
-   * - 댓글 ID와 작성자(authorId)를 함께 전달하여 비인가 삭제 요청을 방지합니다.
+   * - authorId가 제공되면 Repository에서 댓글 작성자와 일치하는 경우에만 삭제합니다.
+   * - authorId가 없으면 소유자 조건이 빠지므로, 일반 사용자 경로에서는 필수로 다루어야 합니다.
    */
-  //TODO 관리자와 post 작성자는 댓글을 삭제 할 수 있도록 확장
+  // TODO: 관리자와 게시글 작성자의 댓글 삭제 권한을 인증/인가 정책으로 분리해야 합니다.
   async deleteReply(
     replyId: ReplyIdParamsDto,
     input: ReplyDeleteQueryDto,
@@ -79,7 +79,6 @@ export class ReplyService {
       id: replyId.id,
       ...(input.authorId !== undefined && { authorId: input.authorId }),
     });
-    // await this.postRepository.updateCounters({ postId: reply.postId, replyCount: -1 }); // 댓글 카운터 감소
     return toResponse(reply);
   }
 
@@ -102,7 +101,7 @@ export class ReplyService {
      */
     const filter = {
       ...(input.authorId !== undefined && { authorId: input.authorId }),
-      ...(input.keyword?.trim() && { keyword: input.keyword.trim() }), //공백제외
+      ...(input.keyword?.trim() && { keyword: input.keyword.trim() }),
     };
 
     /**
@@ -110,7 +109,7 @@ export class ReplyService {
      */
     const page = {
       sort: input.sort ?? 'latest',
-      take: input.take || 10, // 0허용 안함
+      take: input.take || 10,
       ...(input.cursor !== undefined && {
         cursor: {
           id: input.cursor.id,

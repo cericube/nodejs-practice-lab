@@ -1,4 +1,4 @@
-// src/module/post/post.route.ts
+// src/modules/post/post.route.ts
 // 인터페이스 계층
 import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 
@@ -15,7 +15,6 @@ import {
   PostQuerySchema,
   PostResponseSchema,
   PostUpdateBodySchema,
-  PostUpdateCounterBodySchema,
   PostUpdateResponseSchema,
 } from './post.dto';
 
@@ -52,7 +51,7 @@ export const postRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
    * 새로운 게시글 생성
    *
    * - 요청: PostCreateBodySchema를 통해 게시글 생성에 필요한 필드 검증
-   * - 응답: 생성된 게시글 정보를 PostUpdateBodySchema 규격으로 반환
+   * - 응답: 생성된 게시글의 최소 상태 정보를 PostUpdateResponseSchema 규격으로 반환
    */
   fastify.post(
     '/',
@@ -98,39 +97,12 @@ export const postRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * PATCH /api/posts/:id
-   * 게시글 카운터 업데이트 (조회수, 좋아요 등)
-   *
-   * - 요청:
-   *   - Params: 대상 게시글 ID 검증
-   *   - Body: 카운터 증가/감소 요청(PostUpdateCounterBodySchema)
-   *
-   * - 응답:
-   *   - 변경된 게시글 식별자 반환
-   */
-  // fastify.patch(
-  //   '/:id/counter',
-  //   {
-  //     schema: {
-  //       tags: ['Post'],
-  //       params: PostIdParamsSchema,
-  //       body: PostUpdateCounterBodySchema,
-  //       response: { 200: SuccessResponseSchema(PostIdParamsSchema) },
-  //     },
-  //   },
-  //   async (request, reply) => {
-  //     const result = await postController.updateCounter(request.params, request.body);
-  //     return reply.code(200).send(success(result));
-  //   },
-  // );
-
-  /**
    * DELETE /api/posts/:id
    * 게시글 삭제
    *
    * - 요청:
    *   - Params: 삭제 대상 게시글 ID 검증
-   *   - Body: 삭제 요청 검증(PostUpdateBodySchema)
+   *   - Querystring: 작성자 확인용 authorId 검증(PostDeleteQuerySchema)
    *
    * - 응답:
    *   - 삭제 처리 결과(PostUpdateResponseSchema)
@@ -153,11 +125,11 @@ export const postRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
   );
 
   /**
-   * GET /api/posts?title=test
-   * 게시글 단건 조회 (조건 기반)
+   * GET /api/posts?id=1&includeDraft=false
+   * 게시글 단건 조회
    *
    * - 요청:
-   *   - Querystring: PostQuerySchema를 통해 검색 조건 검증
+   *   - Querystring: PostQuerySchema를 통해 게시글 ID와 초안 포함 여부 검증
    *
    * - 응답:
    *   - 게시글 상세 정보(PostResponseSchema) 반환
@@ -179,10 +151,10 @@ export const postRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
 
   /**
    * POST /api/posts/list
-   * 게시글 목록 조회 및 페이징 처리
+   * 게시글 목록 조회 및 커서 기반 페이징 처리
    *
    * - 요청:
-   *   - body: 페이지 번호, 페이지 크기, 검색 조건 검증
+   *   - body: 검색 조건, 정렬 기준, 커서, 페이지 크기 검증
    *
    * - 응답:
    *   - 게시글 목록 + Pagination 정보(PostListResponseSchema)

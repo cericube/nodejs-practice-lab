@@ -2,19 +2,23 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    // 1. Globals 설정
+    // describe/it/expect를 테스트 파일에서 바로 사용할 수 있게 합니다.
     globals: true,
 
-    // 2. 환경 설정 (Node.js 서버 로직에 최적화)
+    // Fastify/Prisma 서버 코드를 테스트하므로 브라우저 대신 Node 런타임을 사용합니다.
     environment: 'node',
 
-    // 3. 파일 포함 경로
+    // 기능별 테스트를 tests 아래에 모으는 현재 디렉터리 규칙입니다.
     include: ['tests/**/*.test.ts'],
 
-    // 4. 타임아웃
+    // DB 통합 테스트가 포함되어 있어 기본값보다 여유 있게 둡니다.
     testTimeout: 10_000,
 
-    // 5. 리포터 설정 : 필요시 사용
+    // 테스트들이 같은 DB 스키마를 공유하고 전역 deleteMany() 정리를 사용하므로
+    // 파일 단위 병렬 실행을 끄고 테스트 데이터 삭제/생성 레이스를 방지합니다.
+    fileParallelism: false,
+
+    // 리포터 설정 : 필요시 사용
     // Vitest 4에서는 'basic' 리포터가 제거되고 'default'가 이를 대체합니다.
     // 'html' 리포터 사용 시 패키지 설치가 필요할 수 있습니다 (npm i -D @vitest/ui)
     // reporters: ['default', 'html'],
@@ -34,9 +38,9 @@ export default defineConfig({
       include: ['src/**/*.ts'],
       //include: ['src/ch08/*.ts'], // ch08 테스트용
       // 커버리지에서 제외할 파일 목록입니다.
-      // 진입점(main.ts), 타입 정의(d.ts), 테스트 파일 등은 일반적으로 제외합니다.
+      // 서버 엔트리포인트, 타입 정의(d.ts), 테스트 파일 등은 일반적으로 제외합니다.
       exclude: [
-        'src/main.ts', // 앱의 엔트리포인트 (Fastify/Express 부트스트랩 코드 등)
+        'src/server.ts', // Fastify listen()을 수행하는 부트스트랩 코드
         '**/*.d.ts', // 타입 선언 파일은 실행 코드가 아니므로 제외
         'src/types/**', // 공용 타입 모음 디렉토리
         '**/*.test.ts', // 테스트 자체는 커버리지 측정 대상이 아님

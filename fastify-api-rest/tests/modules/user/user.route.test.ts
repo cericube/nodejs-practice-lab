@@ -1,11 +1,11 @@
 // tests/module/user/user.route.test.ts
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 
 import { createApp } from '../../../src/app';
-import { prisma } from '../setup';
 import { Response } from 'light-my-request';
+import { cleanupUserTestData } from './user.test-utils';
 
 /**
  * [ User Route Test: Interface & Integration Layer ]
@@ -29,13 +29,12 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  // User와 Profile은 1:1 관계이므로 데이터 무결성을 위해 모두 삭제
-  await prisma.user.deleteMany();
-  await prisma.profile.deleteMany();
+  await cleanupUserTestData();
 });
 
 afterAll(async () => {
-  // if (app) await app.close();
+  await cleanupUserTestData();
+  if (app) await app.close();
 });
 
 describe('UserRoute - 사용자 입력 테스트 ', () => {

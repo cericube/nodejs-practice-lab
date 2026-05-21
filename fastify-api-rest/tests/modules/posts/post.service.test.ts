@@ -185,12 +185,12 @@ describe('PostService : 기본 CRUD', () => {
     //여기서 viewCount 가 void로 1 증가해야 한다.
     const checkView = await service.getPost({
       id: post.id,
-      includeDraft: true,
+      includeDraft: false,
     });
 
     const detailPost = await service.getPost({
       id: post.id,
-      includeDraft: true,
+      includeDraft: false,
     });
 
     // console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');

@@ -1,4 +1,4 @@
-// src/module/postfile/postfile.controller.ts
+// src/modules/postfile/postfile.controller.ts
 
 import type { MultipartFile } from '@fastify/multipart';
 import type { PostFileService } from './postfile.service';

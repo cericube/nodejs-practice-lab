@@ -16,7 +16,7 @@ import { BusinessError } from './common/errors/business.error';
 // Fastify Application Factory
 // ================================
 // - 테스트 / 프로덕션 공통으로 사용하는 서버 생성 진입점
-// - listen()은 여기서 하지 않고, main.ts 등에서 수행
+// - listen()은 여기서 하지 않고, server.ts에서 수행
 // - 이렇게 분리하면 e2e 테스트 시 서버 인스턴스만 생성해서 사용 가능
 export const createApp = async () => {
   // --------------------------------
@@ -153,7 +153,7 @@ export const createApp = async () => {
 
   // --------------------------------
   // 서버 구성 완료된 Fastify 인스턴스 반환
-  // listen()은 외부(main.ts, test bootstrap)에서 수행
+  // listen()은 외부(server.ts, test bootstrap)에서 수행
   // --------------------------------
   return app;
 };

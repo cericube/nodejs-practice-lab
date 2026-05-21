@@ -31,14 +31,8 @@ export type PostCreateBodyDto = Static<typeof PostCreateBodySchema>;
  * [DELETE /posts/:id]
  * [PATCH /posts/:id]
  *
- * 특정 게시글을 식별하기 위한 Path Parameter
- *
- * - id : 대상 게시글의 고유 식별자
- * - authorId : 요청자가 실제 게시글 작성자인지 확인하기 위한 보안 검증 필드
- *
- * 물리적 삭제 환경에서는 삭제된 데이터 복구가 불가능하므로
- * 서비스 레이어에서 authorId와 실제 게시글 작성자를 비교하여
- * 소유권 검증을 수행하는 것이 권장됩니다.
+ * 특정 게시글을 식별하기 위한 Path Parameter입니다.
+ * 작성자 검증용 authorId는 수정 Body 또는 삭제 Query에서 별도로 받습니다.
  */
 export const PostIdParamsSchema = Type.Object(
   {
@@ -69,35 +63,12 @@ export type PostUpdateBodyDto = Static<typeof PostUpdateBodySchema>;
 
 export const PostDeleteQuerySchema = Type.Object(
   {
-    /** 보안 강화: 삭제/수정 요청 시 실제 소유주인지 대조하기 위한 작성자 ID */
+    /** 삭제 요청 시 실제 소유주인지 대조하기 위한 작성자 ID */
     authorId: Type.Optional(Type.Integer()),
   },
   { $id: 'PostDeleteQuery', additionalProperties: false },
 );
 export type PostDeleteQueryDto = Static<typeof PostDeleteQuerySchema>;
-
-/**
- * [PATCH /posts/:id/counter]
- *
- * 게시글 통계 데이터 업데이트 요청
- *
- * viewCount, likeCount, replyCount 등은
- * 일반 사용자 수정 요청과 분리하여 관리합니다.
- *
- * 목적
- * - 사용자 입력 조작 방지
- * - 비즈니스 로직 오염 방지
- * - 내부 서비스 또는 이벤트 기반 업데이트 전용
- */
-export const PostUpdateCounterBodySchema = Type.Object(
-  {
-    viewCount: Type.Optional(Type.Integer()),
-    likeCount: Type.Optional(Type.Integer()),
-    replyCount: Type.Optional(Type.Integer()),
-  },
-  { $id: 'PostUpdateCounterRequest', additionalProperties: false },
-);
-export type PostUpdateCounterBodyDto = Static<typeof PostUpdateCounterBodySchema>;
 
 /**
  * [GET /posts?id]
@@ -174,8 +145,8 @@ export const PostListQuerySchema = Type.Object(
     // --- 정렬 정책 ---
     sort: Type.Optional(
       Type.Union([
-        Type.Literal('latest'), // 최신순 (createdAt DESC)
-        Type.Literal('oldest'), // 과거순 (createdAt ASC)
+        Type.Literal('latest'), // 최신순 (id DESC)
+        Type.Literal('oldest'), // 과거순 (id ASC)
         Type.Literal('mostViewed'), // 조회수순 (viewCount DESC)
         Type.Literal('mostLiked'), // 좋아요순 (likeCount DESC)
         Type.Literal('mostReplied'), // 댓글순 (replyCount DESC)

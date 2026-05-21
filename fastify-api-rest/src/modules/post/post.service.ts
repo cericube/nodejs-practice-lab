@@ -4,7 +4,6 @@ import type {
   PostUpdateBodyDto,
   PostUpdateResponseDto,
   PostIdParamsDto,
-  PostUpdateCounterBodyDto,
   PostQueryDto,
   PostResponseDto,
   PostListQueryDto,
@@ -19,7 +18,7 @@ import type { PostRepository } from './post.repository';
  * 애플리케이션의 핵심 비즈니스 로직을 담당하는 서비스 계층입니다.
  * - Controller와 Repository 사이의 가교 역할을 하며, 도메인 규칙을 적용합니다.
  * - 데이터의 원천인 DB Entity를 API 스펙인 DTO로 변환하여 내부 데이터 구조가 외부에 노출되는 것을 방지합니다.
- * - 모든 데이터 조작 요청은 권한 검증 및 비즈니스 유효성 검사를 거쳐야 합니다.
+ * - 현재 인증 계층이 없으므로 작성자 검증은 요청 DTO의 authorId를 Repository 조건에 전달하는 방식입니다.
  */
 export class PostService {
   constructor(private readonly repository: PostRepository) {}
@@ -31,17 +30,8 @@ export class PostService {
    *   불필요한 DB 내부 필드 노출을 차단하기 위함입니다.
    */
   async createPost(input: PostCreateBodyDto): Promise<PostUpdateResponseDto> {
-    // const {authorId, title, content=undefined, published = false} = input;
     const post = await this.repository.create(input);
-    //
     return toUpdateResponse(post);
-    // return {
-    //   id: post.id,
-    //   authorId: post.authorId,
-    //   published: post.published,
-    //   publishedAt: post.publishedAt ? post.publishedAt.toISOString() : null,
-    //   updatedAt: post.updatedAt.toISOString(),
-    // };
   }
 
   /**
@@ -49,14 +39,14 @@ export class PostService {
    * [업데이트 전략: Partial Update]
    * - `undefined` 필드는 스프레드 연산자를 통해 제외 처리하여 의도하지 않은 데이터 덮어쓰기를 방지합니다.
    * [권한 정책]
-   * - authorId 유무에 따라 본인 소유 확인 또는 관리자 권한 여부를 판단합니다.
-   * - Repository 레벨에서 소유권 검증을 수행하도록 파라미터를 전달합니다.
+   * - 인증 도입 전까지 authorId를 요청값으로 받아 Repository의 WHERE 조건에 전달합니다.
+   * - authorId가 없으면 소유자 조건이 빠지므로, 일반 사용자 경로에서는 필수로 다루어야 합니다.
    */
   async updatePost(
     idParam: PostIdParamsDto,
     input: PostUpdateBodyDto,
   ): Promise<PostUpdateResponseDto> {
-    // TODO : 사용자/관리자 구분해서 수정 처리해야 함
+    // TODO: 인증/권한 모델 도입 후 authorId는 요청 본문이 아니라 인증 컨텍스트에서 가져와야 합니다.
     const data = {
       postId: idParam.id,
       ...(input.authorId !== undefined && { authorId: input.authorId }),
@@ -67,41 +57,16 @@ export class PostService {
 
     const post = await this.repository.update(data);
     return toUpdateResponse(post);
-    // return {
-    //   id: post.id,
-    //   authorId: post.authorId,
-    //   published: post.published,
-    //   publishedAt: post.publishedAt ? post.publishedAt.toISOString() : null,
-    //   updatedAt: post.updatedAt.toISOString(),
-    // };
   }
-
-  /**
-   * 게시글 통계 데이터(조회, 좋아요, 댓글) 업데이트
-   * [동시성 처리 방식]
-   * - Race Condition을 방지하기 위해 서비스 계층의 연산 대신 DB의 원자적 증가(Atomic Increment)를 사용합니다.
-   * - 데이터 무결성을 위해 Repository가 이 원자적 연산을 수행하도록 위임합니다.
-   */
-  // async updateCounter(
-  //   id: PostIdParamsDto,
-  //   input: PostUpdateCounterBodyDto,
-  // ): Promise<PostIdParamsDto> {
-  //   const data = {
-  //     postId: id.id,
-  //     ...(input.viewCount !== undefined && { viewCount: input.viewCount }),
-  //     ...(input.likeCount !== undefined && { likeCount: input.likeCount }),
-  //     ...(input.replyCount !== undefined && { replyCount: input.replyCount }),
-  //   };
-  //   return await this.repository.updateCounters(data);
-  // }
 
   /**
    * 게시글 삭제
    * [권한 및 보안]
-   * - 식별자(ID)와 작성자(authorId) 정보를 함께 전달하여 인가되지 않은 사용자의 삭제 요청을 원천 차단합니다.
+   * - 현재는 요청 Query의 authorId를 Repository 조건에 전달해 작성자 일치 여부를 확인합니다.
+   * - 인증 도입 후에는 클라이언트가 보낸 authorId 대신 인증 컨텍스트를 사용해야 합니다.
    */
   async deletePost(id: PostIdParamsDto, input: PostDeleteQueryDto): Promise<PostUpdateResponseDto> {
-    //TODO : 사용자/관리자 구분하여 삭제 처리해야 함
+    // TODO: 일반 사용자 삭제와 관리자 삭제를 별도 권한 정책으로 분리해야 합니다.
 
     const data = {
       postId: id.id,
@@ -110,13 +75,6 @@ export class PostService {
 
     const post = await this.repository.delete(data);
     return toUpdateResponse(post);
-    // return {
-    //   id: post.id,
-    //   authorId: post.authorId,
-    //   published: post.published,
-    //   publishedAt: post.publishedAt ? post.publishedAt.toISOString() : null,
-    //   updatedAt: post.updatedAt.toISOString(),
-    // };
   }
 
   /**
@@ -127,10 +85,6 @@ export class PostService {
    */
   async getPost(input: PostQueryDto): Promise<PostResponseDto> {
     const { id: postId, includeDraft = false } = input;
-    // await 없으면, 잠재적으로
-    // No record was found for an update 오류날 가능성 있음
-    // 오류 무시함.
-    //await this.updateCounter({ id: postId }, { viewCount: 1 }).catch(() => []);
 
     const post = await this.repository.selectOne({ postId, includeDraft });
 
@@ -156,7 +110,7 @@ export class PostService {
    * 검색 및 필터링 기반 게시글 목록 조회
    * [Pagination 전략: Cursor Based]
    * - 대량의 데이터셋에서 성능 최적화를 위해 Offset 방식 대신 Cursor 기반 페이징을 채택했습니다.
-   * - 정렬 기준(latest, views 등)에 따라 동적으로 커서 값을 생성합니다.
+   * - 정렬 기준(latest, mostViewed 등)에 따라 동적으로 커서 값을 생성합니다.
    * [데이터 처리: Take + 1]
    * - 요청된 개수(take)보다 하나 더 많은 레코드를 조회하여 클라이언트에게 다음 페이지 존재 여부(hasNextPage)를 효율적으로 전달합니다.
    */
@@ -167,7 +121,7 @@ export class PostService {
     const filter = {
       ...(input.authorId !== undefined && { authorId: input.authorId }),
       status: input.status ?? 'published',
-      ...(input.keyword?.trim() && { keyword: input.keyword.trim() }), // 공백 제외
+      ...(input.keyword?.trim() && { keyword: input.keyword.trim() }),
       titleOnly: input.titleOnly ?? true,
     };
 
@@ -211,8 +165,8 @@ export class PostService {
      * Pagination 옵션 생성
      */
     const page = {
-      sort: input.sort ?? 'latest', // ''도 허용안함
-      take: input.take || 10, //0 허용안함
+      sort: input.sort ?? 'latest',
+      take: input.take || 10,
       ...(input.cursor !== undefined && {
         cursor: {
           id: input.cursor.id,

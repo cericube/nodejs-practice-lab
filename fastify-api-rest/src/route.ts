@@ -19,6 +19,7 @@ import { postRoutes } from './modules/post/post.route';
 import { replyRoutes } from './modules/reply/reply.route';
 import { postLikeRoutes } from './modules/postlike/postlike.route';
 import { postFileRoutes } from './modules/postfile/postfile.route';
+import { postViewStatRoutes } from './modules/postviewstat/postviewstat.route';
 
 export async function routes(app: FastifyInstance) {
   // API v1 (원하면 /api/v1로 한번 더 감싸도 됨)
@@ -27,4 +28,5 @@ export async function routes(app: FastifyInstance) {
   await app.register(postFileRoutes, { prefix: '/files' });
   await app.register(replyRoutes, { prefix: '/replies' });
   await app.register(postLikeRoutes, { prefix: '/postlikes' });
+  await app.register(postViewStatRoutes, { prefix: '/viewstats' });
 }

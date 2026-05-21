@@ -142,7 +142,8 @@ export class ReplyRepository {
    *
    * @param data.authorId
    * - 제공 시: 본인 댓글만 삭제 가능
-   * - 생략 시: 관리자 권한(글 작성자 포함)으로 모든 댓글 삭제 가능
+   * - 생략 시: 작성자 조건 없이 삭제됩니다.
+   *   현재 관리자/게시글 작성자 권한 판별 로직은 없으므로 일반 사용자 API에서는 생략하면 안 됩니다.
    *
    * 조건부 스프레드 패턴을 사용하여
    * authorId가 있을 때만 WHERE 조건에 포함됩니다.
@@ -152,13 +153,13 @@ export class ReplyRepository {
       const reply = await tx.reply.delete({
         where: {
           id: data.id,
-          // 본인 댓글만 삭제할 수 있도록 조건 추가 (관리자 고려  authorId optional 처리)
+          // 인증 도입 전 임시 소유자 검증: authorId가 없으면 소유자 조건이 적용되지 않습니다.
           ...(data.authorId !== undefined && { authorId: data.authorId }),
         },
         select: replyUpdateSelect,
       });
 
-      // 댓글 카운터 감소
+      // 댓글 삭제와 게시글 카운터 갱신을 같은 트랜잭션으로 묶어 집계 캐시 정합성을 유지합니다.
       await tx.post.update({
         where: { id: reply.postId },
         data: { replyCount: { decrement: 1 } },
@@ -185,13 +186,11 @@ export class ReplyRepository {
    * - 응답 시 slice(0, take) 필요
    */
   async selectMany(params: { filter?: searchFilter; page?: searchPageOption }) {
-    // 기본값 할당 및 구조 분해
     const { filter = {}, page = {} } = params;
     const { sort = 'latest', cursor, take = 10 } = page;
 
     const where: Prisma.ReplyWhereInput = {};
 
-    // 작성자 필터
     if (filter.authorId) where.authorId = filter.authorId;
 
     /**
@@ -220,17 +219,9 @@ export class ReplyRepository {
       sort === 'latest' ? { id: 'desc' } : { id: 'asc' };
 
     /**
-     * =============================================
-     * 3. 데이터 조회
-     * =============================================
-     *
      * cursor 기반 pagination
      *
-     * - cursor: 시작 위치 지정
-     * - skip: cursor 레코드 제외
-     *
-     * await 사용 이유:
-     * - Prisma는 Promise를 반환하므로 결과 사용 시 반드시 await 필요
+     * Prisma cursor는 기준 레코드를 포함하므로 skip: 1로 중복 노출을 방지합니다.
      */
     const replies = await this.prisma.reply.findMany({
       where: where,

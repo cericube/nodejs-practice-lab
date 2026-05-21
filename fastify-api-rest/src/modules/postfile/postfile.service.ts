@@ -1,4 +1,4 @@
-// src/module/postfile/postfile.service.ts
+// src/modules/postfile/postfile.service.ts
 
 import type { PostFileRepository } from './postfile.repository';
 import { pipeline } from 'stream/promises';
@@ -160,8 +160,8 @@ export class PostFileService {
     // 컨트롤러/라우트에서 HTTP 응답으로 pipe할 수 있도록 읽기 스트림만 생성해 반환합니다.
     const stream = createReadStream(filePath);
 
-    // 통계성 업데이트 실패는 다운로드 성공 여부와 분리해 로그만 남깁니다.
-    // 비동기로 처리하는 이유?? 다운로드 응답이 사용자에게 지연되지 않도록 하기 위해서입니다.
+    // 다운로드 응답 지연을 피하기 위해 통계성 카운터 갱신은 후처리로 실행합니다.
+    // 실패해도 파일 전송 성공 여부와 분리하고 로그만 남깁니다.
     this.fileRepository.incrementDownloadCount(data.id).catch((err) => {
       console.error(`Failed to increment download count for fileId ${data.id}:`, err);
     });

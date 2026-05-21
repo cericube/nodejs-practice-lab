@@ -1,5 +1,6 @@
 // src/modules/post/post.repository.ts
 import { PrismaClient, Prisma } from '../../generated/client';
+import { PostViewStatRepository } from '../postviewstat/postviewstat.repository';
 
 /**
  * 생성/수정/삭제 작업 후 반환할 최소 식별 정보.
@@ -119,7 +120,8 @@ export class PostRepository {
    * 게시글을 수정합니다.
    *
    * @param data.authorId - 제공 시 해당 작성자의 게시글인지 WHERE 조건으로 검증합니다.
-   *   생략하면 모든 게시글을 수정할 수 있으므로 관리자 전용 경로에서만 사용하세요.
+   *   현재 인증 컨텍스트가 없기 때문에 클라이언트 입력에 의존합니다.
+   *   생략하면 소유자 조건이 빠지므로 일반 사용자 API에서는 반드시 전달되어야 합니다.
    *
    * 각 필드는 `undefined`일 때 SET 절에서 제외되어 의도치 않은 덮어쓰기를 방지합니다.
    * `null`이나 빈 문자열은 의도적인 값으로 취급되어 그대로 반영됩니다.
@@ -134,15 +136,15 @@ export class PostRepository {
     return this.prisma.post.update({
       where: {
         id: data.postId,
-        // 권한 체크: 본인 글만 수정 가능하도록 조건 분기 (관리자 고려 시 authorId optional 처리)
+        // 인증 도입 전 임시 소유자 검증: authorId가 없으면 소유자 조건이 적용되지 않습니다.
         ...(data.authorId !== undefined && { authorId: data.authorId }),
       },
       data: {
-        ...(data.title !== undefined && { title: data.title }), //공백 허용
-        ...(data.content !== undefined && { content: data.content }), //공백 허용
+        ...(data.title !== undefined && { title: data.title }),
+        ...(data.content !== undefined && { content: data.content }),
         ...(data.published !== undefined && {
           published: data.published,
-          publishedAt: data.published ? new Date() : null, // 공개 상태에 따라 publishedAt 업데이트
+          publishedAt: data.published ? new Date() : null,
         }),
       },
       select: postUpdateSelect,
@@ -150,49 +152,10 @@ export class PostRepository {
   }
 
   /**
-   * 공개글에 한해서 조회수·좋아요·댓글 수 등 카운터를 원자적으로 증감합니다.
-   *
-   * Prisma의 `increment` 연산을 사용하므로 애플리케이션에서 현재 값을 먼저 조회할
-   * 필요가 없고, 동시 요청이 많더라도 DB 레벨에서 레이스 컨디션 없이 처리됩니다.
-   *
-   * 카운터 전용 업데이트이므로 반환값은 id만으로 충분합니다.
-   * (응답 직렬화 비용 최소화)
-   *
-   * PostgreSQL은 행(row) 단위로 재작성하기 때문에 SET 컬럼이 많아져도
-   *   행 재작성 자체의 비용 증가는 미미합니다. 다만 인덱스 업데이트 여부 판단 비용이
-   *   소폭 늘어날 수 있으므로, 카운터 컬럼에는 인덱스를 최소화하는 것이 좋습니다.
-   */
-  // async updateCounters(data: {
-  //   postId: number;
-  //   viewCount?: number;
-  //   likeCount?: number;
-  //   replyCount?: number;
-  // }) {
-  //   return this.prisma.post.update({
-  //     where: {
-  //       id: data.postId,
-  //       published: true,
-  //     },
-  //     data: {
-  //       ...(data.viewCount !== undefined && {
-  //         viewCount: { increment: data.viewCount },
-  //       }),
-  //       ...(data.likeCount !== undefined && {
-  //         likeCount: { increment: data.likeCount },
-  //       }),
-  //       ...(data.replyCount !== undefined && {
-  //         replyCount: { increment: data.replyCount },
-  //       }),
-  //     },
-  //     select: { id: true },
-  //   });
-  // }
-
-  /**
    * 게시글을 물리적으로 삭제합니다.
    *
    * @param data.authorId - 제공 시 본인 글인지 WHERE 조건으로 검증합니다.
-   *   관리자 경로에서는 생략하여 전체 삭제 권한을 부여할 수 있습니다.
+   *   현재 관리자 권한 판별 로직은 없으므로, 생략 가능한 형태는 내부/관리자용 API로 분리되기 전까지 주의가 필요합니다.
    *
    * Prisma Schema의 onDelete 설정에 따라 PostViewStat 등
    *   연관 데이터가 CASCADE 삭제될 수 있습니다. 스키마의 관계 설정을 반드시 확인하세요.
@@ -201,7 +164,7 @@ export class PostRepository {
     return this.prisma.post.delete({
       where: {
         id: data.postId,
-        // 본인 글만 삭제할 수 있도록 조건 추가 (관리자 고려 시 authorId optional 처리)
+        // 인증 도입 전 임시 소유자 검증: authorId가 없으면 소유자 조건이 적용되지 않습니다.
         ...(data.authorId !== undefined && { authorId: data.authorId }),
       },
       select: postUpdateSelect,
@@ -211,21 +174,24 @@ export class PostRepository {
   /**
    * 게시글 단건을 조회합니다. 존재하지 않으면 예외를 던집니다.
    *
-   * @param data.includePublished
+   * @param data.includeDraft
    *   - `false` (기본값): 공개(published=true) 게시글만 조회합니다. 일반 독자용.
    *   - `true`: 비공개 게시글도 포함하여 조회합니다. 작성자·관리자용.
    */
+
   async selectOne(data: { postId: number; includeDraft?: boolean }) {
     const { postId, includeDraft = false } = data;
 
     return this.prisma.$transaction(async (tx) => {
-      // 조회수 증가 (공개글에 한해서)
+      // 공개글 상세 조회만 조회수와 버킷 통계를 증가시킵니다.
       if (!includeDraft) {
         await tx.post.update({
           where: { id: postId, published: true },
           data: { viewCount: { increment: 1 } },
           select: { id: true },
         });
+
+        await new PostViewStatRepository(tx).createPostViewStat(postId);
       }
 
       return tx.post.findUniqueOrThrow({
@@ -285,7 +251,7 @@ export class PostRepository {
 
     // 2. Keyset 조건 빌드: 이전 페이지 마지막 레코드 이후부터 스캔
     const keysetCondition = cursor ? this.buildKeysetCondition(sort, cursor) : {};
-    // 3. Schema @@index 순서에 맞춰 orderBy를 구성해 Filesort를 방지
+    // 3. 일반 목록 API처럼 published 조건이 고정된 조회에서는 Schema @@index 순서에 맞춰 orderBy를 구성합니다.
     const orderBy = this.mapSortOption(sort);
     // 4. take + 1개 조회 → hasNextPage 판단용 (응답 시 slice(0, take) 필요)
 
@@ -366,7 +332,8 @@ export class PostRepository {
     // PostgreSQL의 tsvector(Full Text Search)나 Elasticsearch 도입을 고려
     if (filter.keyword) {
       const searchCondition = { contains: filter.keyword, mode: Prisma.QueryMode.insensitive };
-      const filterOnly = filter.titleOnly ?? true; // filterOnly : 값이 없으면 true
+      // 본문 검색은 ILIKE '%keyword%'로 Full Table Scan 비용이 커질 수 있어 제목 검색을 기본값으로 둡니다.
+      const filterOnly = filter.titleOnly ?? true;
 
       if (filterOnly) {
         where.title = searchCondition;
@@ -448,13 +415,16 @@ export class PostRepository {
    * Prisma Schema의 `@@index` 컬럼 순서와 정확히 일치시켜야
    * 쿼리 실행 시 Filesort(인메모리 재정렬)를 피하고 인덱스 스캔을 활용할 수 있습니다.
    *
-   * | sort        | @@index                                    |
+   * 일반 목록 API는 기본적으로 published 조건을 WHERE에서 고정하므로,
+   * 정렬 컬럼을 인덱스의 뒤쪽 컬럼 순서에 맞춰 구성합니다.
+   *
+   * | sort        | 정렬 기준                                  |
    * |-------------|-------------------------------------------- |
-   * | latest      | [published, id DESC]                        |
-   * | oldest      | [published, id ASC]                         |
-   * | mostViewed  | [published, viewCount DESC, id DESC]        |
-   * | mostLiked   | [published, likeCount DESC, id DESC]        |
-   * | mostReplied | [published, replyCount DESC, id DESC]       |
+   * | latest      | id DESC                                     |
+   * | oldest      | id ASC                                      |
+   * | mostViewed  | viewCount DESC, id DESC                     |
+   * | mostLiked   | likeCount DESC, id DESC                     |
+   * | mostReplied | replyCount DESC, id DESC                    |
    */
   private mapSortOption(sort: string): Prisma.PostOrderByWithRelationInput[] {
     switch (sort) {

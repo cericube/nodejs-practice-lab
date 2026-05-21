@@ -4,6 +4,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { UserRepository } from '../../../src/modules/user/user.repository';
 import { prisma } from '../setup';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
+import { cleanupUserTestData } from './user.test-utils';
 
 /**
  * [ Repository Layer Test: Persistence & Integrity ]
@@ -20,15 +21,11 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
  * 관계가 맺어진 User와 Profile 데이터를 모두 초기화합니다.
  */
 beforeEach(async () => {
-  // User와 Profile은 1:1 관계이므로 데이터 무결성을 위해 모두 삭제
-  await prisma.user.deleteMany();
-  await prisma.profile.deleteMany();
+  await cleanupUserTestData();
 });
 
 afterEach(async () => {
-  // 테스트 완료 후 잔여 데이터를 정리하여 다음 테스트 세트에 영향을 주지 않도록 함
-  await prisma.user.deleteMany();
-  await prisma.profile.deleteMany();
+  await cleanupUserTestData();
 });
 
 /**

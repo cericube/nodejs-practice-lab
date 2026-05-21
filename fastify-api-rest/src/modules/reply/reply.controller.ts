@@ -1,4 +1,4 @@
-// src/module/reply/reply.controller.ts
+// src/modules/reply/reply.controller.ts
 
 import type {
   ReplyCreateBodyDto,

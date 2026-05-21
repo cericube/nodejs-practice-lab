@@ -1,15 +1,14 @@
 {
-  // 1. 루트의 공통 설정을 그대로 가져옵니다.
+  // 루트 공통 TypeScript 정책을 상속하고, API 서버 패키지의 경로만 별도로 지정합니다.
   "extends": "../tsconfig.json",
 
   "compilerOptions": {
-    // 2. 이 프로젝트만의 소스 및 출력 경로 설정
-    // 주석처리 : TypeScript가 자동으로 rootDir를 vitest로 계산합니다.
-    "rootDir": "./src", // 작성할 소스 코드 위치
-    "outDir": "./dist" // 컴파일된 JS 파일이 저장될 위치
+    // 서버 소스만 컴파일 대상으로 삼아 테스트/빌드 산출물이 dist에 섞이지 않도록 합니다.
+    "rootDir": "./src",
+    "outDir": "./dist"
   },
 
-  // 3. 실제 검사 및 컴파일 대상 지정
-  "include": ["src/**/*", "src/shared"], // src 폴더 안의 모든 파일을 대상으로 함
+  // 테스트 파일은 Vitest가 별도로 처리하므로, 앱 런타임 소스만 타입 검사 대상으로 둡니다.
+  "include": ["src/**/*", "src/shared"],
   "exclude": ["node_modules", "dist"]
 }

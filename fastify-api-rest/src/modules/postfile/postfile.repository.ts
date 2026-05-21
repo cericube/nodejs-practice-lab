@@ -1,4 +1,4 @@
-// src/module/postfile/postfile.repository.ts
+// src/modules/postfile/postfile.repository.ts
 
 import { BusinessError } from '../../common/errors/business.error';
 import { ErrorCode } from '../../common/errors/error.codes';

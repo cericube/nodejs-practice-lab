@@ -1,4 +1,4 @@
-// src/module/postfile/postfile.route.ts
+// src/modules/postfile/postfile.route.ts
 
 import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 
