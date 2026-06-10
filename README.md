@@ -1,72 +1,47 @@
 # Node.js Practice Lab
 
-Node.js와 TypeScript 기반 백엔드 실습을 위한 워크스페이스입니다.
-루트는 ESLint, Prettier, TypeScript 같은 공통 개발 도구를 관리하고, 실제 실행 가능한 애플리케이션은 `fastify-api-rest`에 있습니다.
+Node.js와 TypeScript 기반 백엔드 개발을 연습하기 위한 워크스페이스입니다.
+루트 프로젝트는 공통 개발 도구와 하위 실습 프로젝트를 관리하고, 실제 REST API 서버 구현은 `fastify-api-rest` 하위 프로젝트에 분리되어 있습니다.
 
-## 프로젝트 개요
-
-`fastify-api-rest`는 Fastify, TypeBox, Prisma, PostgreSQL을 조합해 REST API 서버를 구성하는 실습 프로젝트입니다. 도메인별로 Route, Controller, Service, Repository 계층을 나누고, TypeBox 스키마로 요청 검증과 응답 직렬화를 수행합니다.
-
-주요 구현 범위는 다음과 같습니다.
-
-| 영역      | 내용                                                        |
-| --------- | ----------------------------------------------------------- |
-| 사용자    | 사용자 생성, 수정, 조회, 목록, 중복 확인, soft delete, 복구 |
-| 게시글    | 게시글 생성, 수정, 삭제, 단건 조회, 커서 기반 목록 조회     |
-| 댓글      | 댓글 생성, 수정, 삭제, 목록 조회                            |
-| 좋아요    | 게시글 좋아요, 좋아요 취소, 사용자별/게시글별 좋아요 목록   |
-| 파일      | multipart 업로드, 게시글 첨부, 다운로드, 삭제, 첨부 목록    |
-| 조회 통계 | bucket 기반 조회 수 합계, 목록, 인기 게시글 조회            |
-
-## 기술 스택
-
-| 영역                | 기술                     |
-| ------------------- | ------------------------ |
-| Runtime             | Node.js 20.x             |
-| Language            | TypeScript               |
-| Module System       | ESM (`"type": "module"`) |
-| Web Framework       | Fastify 5                |
-| Schema / Validation | TypeBox                  |
-| ORM                 | Prisma 7                 |
-| Database            | PostgreSQL               |
-| Test                | Vitest                   |
-| Logger              | Pino, pino-pretty        |
-| Package Manager     | npm workspaces           |
-
-## 디렉터리 구조
+## 프로젝트 구성
 
 ```text
 nodejs-practice-lab/
-  package.json               # 루트 워크스페이스 및 공통 개발 도구
-  eslint.config.mjs          # ESLint 공통 설정
-  .prettierrc                # Prettier 공통 설정
-  tsconfig.json              # 루트 TypeScript 설정
+  README.md                 # 워크스페이스 전체 안내 문서
+  package.json              # npm workspaces 및 공통 개발 스크립트
+  package-lock.json         # 루트 의존성 lock 파일
+  tsconfig.json             # 공통 TypeScript 설정
+  eslint.config.mjs         # 공통 ESLint 설정
+  .prettierrc               # 공통 Prettier 설정
+  .vscode/                  # VS Code 개발 환경 설정
 
-  fastify-api-rest/
-    package.json             # API 서버 실행/테스트 스크립트
-    prisma/
-      schema.prisma          # Prisma 모델
-      migrations/            # DB 마이그레이션
-    src/
-      app.ts                 # Fastify 앱 생성, 플러그인/라우트 등록
-      server.ts              # 실제 listen() 실행 진입점
-      route.ts               # 도메인 라우트 중앙 등록
-      common/                # 공통 응답, 에러, 유틸
-      config/                # 환경 변수, Prisma 설정
-      generated/             # Prisma generated client
-      modules/               # 도메인별 API 모듈
-      plugins/               # Fastify plugin
-      types/                 # Fastify 타입 확장
-    tests/                   # Vitest 테스트
-    docs/
-      DEVELOPMENT_STANDARD.md
+  fastify-api-rest/         # Fastify REST API 실습 프로젝트
+    README.md               # API 프로젝트 전용 안내 문서
+    package.json            # API 서버 실행/테스트 스크립트
+    prisma/                 # Prisma schema 및 migrations
+    src/                    # Fastify API 서버 소스
+    tests/                  # Vitest 테스트
+    docs/                   # 개발 표준 문서
+
+  redis-examples/           # Redis 예제 실습 영역
+    package.json
 ```
 
-`dist`, `coverage`, `logs`, `uploads`, `node_modules`, `src/generated`는 빌드/실행/생성 산출물입니다. `src/generated` 변경이 필요하면 `prisma/schema.prisma`를 수정한 뒤 Prisma 생성 절차를 따릅니다.
+## 프로젝트 역할 분리
 
-## 실행 준비
+| 경로 | 역할 |
+| --- | --- |
+| `./` | 워크스페이스 루트, 공통 개발 도구, TypeScript/ESLint/Prettier 설정 관리 |
+| `./fastify-api-rest` | Fastify, TypeBox, Prisma, PostgreSQL 기반 REST API 서버 |
+| `./redis-examples` | Redis 예제 실습을 위한 별도 영역 |
 
-이 저장소는 Windows 개발 환경에서 Node.js 경로를 다음처럼 잡는 것을 기준으로 합니다.
+루트 README는 저장소 전체 구조와 공통 작업 방법만 설명합니다.
+Fastify 서버의 실행, DB 설정, Prisma, API 구조는 `fastify-api-rest/README.md`에서 관리합니다.
+
+## 개발 환경
+
+이 워크스페이스는 Windows 환경에서 Node.js 20.x를 사용하는 것을 기준으로 합니다.
+VS Code 터미널에서는 다음처럼 Node.js 경로를 먼저 잡아 사용할 수 있습니다.
 
 ```json
 {
@@ -76,124 +51,111 @@ nodejs-practice-lab/
 }
 ```
 
-의존성은 루트에서 한 번에 설치합니다.
+확인 명령:
 
 ```bash
+node -v
+npm -v
+```
+
+## 루트 프로젝트 초기화
+
+새 환경에서 저장소를 받은 뒤 루트에서 의존성을 설치합니다.
+
+```bash
+cd D:\NodejsDevelope\workspace\nodejs-practice-lab
 npm install
 ```
 
-API 서버는 PostgreSQL 연결이 필요합니다. `fastify-api-rest/.env`에 최소한 `DATABASE_URL`을 설정합니다.
+루트 `package.json`은 npm workspaces를 사용하며 현재 `fastify-api-rest`가 워크스페이스로 등록되어 있습니다.
 
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/database?schema=public"
-NODE_ENV="development"
-HOST="0.0.0.0"
-PORT="3000"
-LOG_LEVEL="info"
+```json
+{
+  "workspaces": ["fastify-api-rest"]
+}
 ```
 
-파일 업로드와 DB 커넥션 풀은 다음 환경 변수로 조정할 수 있습니다.
+따라서 루트에서 `npm install`을 실행하면 루트 공통 개발 도구와 `fastify-api-rest` 의존성이 함께 설치됩니다.
 
-| 변수                   | 기본값               | 설명                     |
-| ---------------------- | -------------------- | ------------------------ |
-| `UPLOAD_DIR`           | `./uploads`          | 업로드 파일 저장 경로    |
-| `UPLOAD_MAX_FILES`     | `5`                  | 요청당 최대 파일 수      |
-| `UPLOAD_MAX_FILE_SIZE` | `10485760`           | 파일당 최대 크기         |
-| `POOL_MAX`             | `10`                 | 최대 DB 커넥션 수        |
-| `POOL_MIN`             | `2`                  | 최소 유지 DB 커넥션 수   |
-| `LOG_PATH`             | `./logs/app-dev.log` | 운영 모드 파일 로그 경로 |
+## 루트 패키지 구성
 
-## 실행 방법
+루트에는 실행 서버가 아니라 공통 개발 도구가 설치되어 있습니다.
 
-개발 서버는 `fastify-api-rest` 워크스페이스에서 실행합니다.
-
-```bash
-cd fastify-api-rest
-npm run dev
-```
-
-기본 설정에서는 다음 주소로 서버가 기동됩니다.
-
-```text
-http://localhost:3000
-```
-
-모든 API는 `src/app.ts`에서 `/api` prefix로 등록됩니다.
-
-## 테스트
-
-테스트는 Vitest로 실행합니다.
-
-```bash
-cd fastify-api-rest
-npm test
-```
-
-테스트 설정은 `fastify-api-rest/vite.config.ts`에 있으며, `tests/**/*.test.ts`를 대상으로 합니다. DB 통합 테스트가 포함되어 있어 파일 단위 병렬 실행은 꺼져 있습니다.
-
-커버리지 리포트는 테스트 실행 후 `fastify-api-rest/coverage`에 생성됩니다.
-
-## Prisma
-
-Prisma schema는 `fastify-api-rest/prisma/schema.prisma`에 있습니다.
-
-현재 모델은 다음 도메인을 기준으로 구성되어 있습니다.
-
-| 모델           | 역할                                       |
-| -------------- | ------------------------------------------ |
-| `User`         | 사용자 계정, soft delete                   |
-| `Profile`      | 사용자 확장 정보 및 아바타 메타데이터      |
-| `Post`         | 게시글 본문과 조회/좋아요/댓글 캐시 카운트 |
-| `Reply`        | 게시글 댓글                                |
-| `PostLike`     | 사용자와 게시글의 명시적 다대다 좋아요     |
-| `PostFile`     | 게시글 첨부 파일 메타데이터                |
-| `PostViewStat` | 시간 bucket 기반 게시글 조회 통계          |
-
-대표 명령은 API 프로젝트 안에서 실행합니다.
-
-```bash
-cd fastify-api-rest
-npx prisma generate
-npx prisma migrate dev
-```
-
-## API Prefix
-
-`src/route.ts`에서 도메인 라우트가 중앙 등록됩니다.
-
-| Prefix           | 모듈                 |
-| ---------------- | -------------------- |
-| `/api/users`     | 사용자               |
-| `/api/posts`     | 게시글               |
-| `/api/files`     | 파일 업로드/다운로드 |
-| `/api/replies`   | 댓글                 |
-| `/api/postlikes` | 게시글 좋아요        |
-| `/api/viewstats` | 게시글 조회 통계     |
-
-공통 응답은 `success(data)` 형태로 감싸며, 전역 에러 처리는 `src/common/errors/error.handler.ts`에서 담당합니다.
-
-## 개발 규칙
-
-새 기능은 기존 모듈 구조를 따릅니다.
-
-```text
-src/modules/{domain}/
-  {domain}.route.ts        # HTTP route, schema 연결
-  {domain}.controller.ts   # 요청 DTO를 서비스 호출로 변환
-  {domain}.service.ts      # 비즈니스 로직
-  {domain}.repository.ts   # Prisma 데이터 접근
-  {domain}.dto.ts          # TypeBox schema와 타입
-```
-
-더 자세한 개발 기준은 `fastify-api-rest/docs/DEVELOPMENT_STANDARD.md`를 우선 참고합니다.
+| 구분 | 패키지 |
+| --- | --- |
+| TypeScript | `typescript`, `tsx`, `@types/node` |
+| Lint | `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-config-prettier`, `globals` |
+| Format | `prettier` |
 
 ## 루트 명령
-
-루트에서는 전체 워크스페이스에 공통 도구를 실행합니다.
 
 ```bash
 npm run lint
 npm run format
 ```
 
-서버 실행과 테스트는 실제 애플리케이션이 있는 `fastify-api-rest`에서 수행합니다.
+| 명령 | 설명 |
+| --- | --- |
+| `npm run lint` | 전체 워크스페이스 ESLint 검사 |
+| `npm run format` | 전체 워크스페이스 Prettier 포맷 적용 |
+
+API 서버 실행과 테스트는 `fastify-api-rest` 프로젝트에서 수행합니다.
+
+```bash
+cd fastify-api-rest
+npm run dev
+npm test
+```
+
+## TypeScript 공통 설정
+
+루트 `tsconfig.json`은 하위 프로젝트가 상속할 공통 TypeScript 정책입니다.
+
+주요 설정:
+
+| 옵션 | 값 | 설명 |
+| --- | --- | --- |
+| `target` | `ES2022` | Node.js 20.x 환경에 맞춘 출력 문법 |
+| `module` | `ESNext` | ESM import/export 사용 |
+| `moduleResolution` | `bundler` | tsx, Vite 계열 도구에 적합한 모듈 해석 |
+| `strict` | `true` | 엄격한 타입 검사 활성화 |
+| `isolatedModules` | `true` | 파일별 독립 모듈 처리 |
+
+루트는 공통 설정 저장소 역할이므로 `include`는 `dummy.ts`만 포함하여 입력 파일 없음 오류를 피합니다.
+실제 API 서버 소스는 `fastify-api-rest/tsconfig.json`에서 별도로 지정합니다.
+
+## 하위 프로젝트 시작 가이드
+
+### Fastify REST API
+
+```bash
+cd fastify-api-rest
+npm install
+npm run dev
+```
+
+자세한 설정과 실행 방법은 [fastify-api-rest/README.md](./fastify-api-rest/README.md)를 참고합니다.
+
+### Redis Examples
+
+```bash
+cd redis-examples
+npm install
+```
+
+현재 `redis-examples`는 예제 실습 영역만 준비되어 있으며, 실행 스크립트는 아직 구성되어 있지 않습니다.
+
+## 산출물과 관리 대상
+
+다음 경로는 설치, 빌드, 테스트, 실행 과정에서 생성되는 산출물입니다.
+
+| 경로 | 설명 |
+| --- | --- |
+| `node_modules/` | npm 패키지 설치 결과 |
+| `fastify-api-rest/dist/` | TypeScript 빌드 결과 |
+| `fastify-api-rest/coverage/` | Vitest 커버리지 리포트 |
+| `fastify-api-rest/logs/` | 애플리케이션 로그 |
+| `fastify-api-rest/uploads/` | 파일 업로드 저장 경로 |
+| `fastify-api-rest/src/generated/` | Prisma Client 생성 결과 |
+
+Prisma 관련 변경은 `fastify-api-rest/prisma/schema.prisma`를 먼저 수정한 뒤 API 프로젝트에서 Prisma 생성 명령을 실행합니다.

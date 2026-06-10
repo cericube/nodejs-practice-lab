@@ -1,0 +1,13 @@
+{
+  // 루트 공통 TypeScript 정책을 상속하고, API 서버 패키지의 경로만 별도로 지정합니다.
+  "extends": "../tsconfig.json",
+
+  "compilerOptions": {
+    // src와 test를 같은 TypeScript 프로젝트로 묶어 IDE가 Node/Vitest 타입을 함께 인식하게 합니다.
+    "rootDir": ".",
+    "outDir": "./dist",
+    "types": ["node", "vitest"]
+  },
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

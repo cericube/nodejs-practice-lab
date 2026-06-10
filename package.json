@@ -5,7 +5,8 @@
   "type": "module",
   "description": "",
   "workspaces": [
-    "fastify-api-rest"
+    "fastify-api-rest",
+    "redis-examples"
   ],
   "scripts": {
     "lint": "eslint .",
