@@ -14,6 +14,10 @@ export default defineConfig({
     // DB 통합 테스트가 포함되어 있어 기본값보다 여유 있게 둡니다.
     testTimeout: 10_000,
 
+    // 테스트 실행 전에 setup.ts 파일을 먼저 실행하여 테스트 환경을 초기화합니다.
+    // 또는 각 테스트 파일이 실행되기 전에 setup.ts에서 필요한 초기화 작업을 수행할 수 있습니다.
+    // setupFiles: ['./test/setup.ts'],
+
     // 6. 커버리지 설정
     coverage: {
       enabled: true, // 테스트 실행 시 커버리지 수집을 활성화합니다.

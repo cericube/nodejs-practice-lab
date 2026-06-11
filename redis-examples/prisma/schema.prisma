@@ -1,0 +1,25 @@
+// =========================
+// Prisma Generator
+// =========================
+// Prisma Client 생성 설정
+// - Prisma 7부터 provider는 "prisma-client" 사용 (-js 제거)
+// - output을 지정하지 않으면 monorepo / tsconfig path 환경에서 import 꼬일 수 있음
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  author    String
+  status    String   @default("DRAFT")
+  viewCount Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
