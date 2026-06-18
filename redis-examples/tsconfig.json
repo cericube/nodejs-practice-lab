@@ -8,6 +8,6 @@
     "outDir": "./dist",
     "types": ["node", "vitest"]
   },
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist"]
 }

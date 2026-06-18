@@ -9,7 +9,10 @@ export default defineConfig({
     environment: 'node',
 
     // 기능별 테스트를 tests 아래에 모으는 현재 디렉터리 규칙입니다.
-    include: ['test/**/*.test.ts'],
+    include: ['tests/**/*.test.ts'],
+
+    // Redis/SQLite 같은 공유 자원을 초기화하는 통합 테스트이므로 파일 단위 병렬 실행을 끕니다.
+    fileParallelism: false,
 
     // DB 통합 테스트가 포함되어 있어 기본값보다 여유 있게 둡니다.
     testTimeout: 10_000,

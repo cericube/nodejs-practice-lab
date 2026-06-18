@@ -1,0 +1,182 @@
+import { redis } from '../lib/redis.js';
+import { RedisKey } from '../redis/redis-key.js';
+
+// 세션 생성 시 입력으로 받을 수 있는 필드들입니다.
+export type CreateSessionInput = {
+  sessionId: string;
+  userId: number;
+  email: string;
+  role: string;
+  userAgent?: string;
+  ip?: string;
+};
+
+// Redis Hash에 저장하고 서비스 밖으로 반환할 로그인 세션 형태입니다.
+export type SessionOutput = {
+  sessionId: string;
+  userId: number;
+  email: string;
+  role: string;
+  issuedAt: string;
+  expiresAt: string;
+  lastAccessedAt: string;
+  userAgent: string;
+  ip: string;
+};
+
+/**
+ * Redis Hash 조회 결과를 SessionOutput 형태로 변환
+ *
+ * hGetAll은 Hash가 없을 때 빈 객체를 반환합니다.
+ * 빈 객체는 세션이 없거나 만료된 상태로 판단할 수 있도록 null로 변환합니다.
+ *
+ * Redis Hash의 값은 문자열로 저장되므로 userId는 숫자로 다시 변환합니다.
+ */
+function parseSessionHash(hash: Record<string, string>): SessionOutput | null {
+  if (Object.keys(hash).length === 0) {
+    return null;
+  }
+
+  return {
+    sessionId: hash.sessionId,
+    userId: Number(hash.userId),
+    email: hash.email,
+    role: hash.role,
+    issuedAt: hash.issuedAt,
+    expiresAt: hash.expiresAt,
+    lastAccessedAt: hash.lastAccessedAt,
+    userAgent: hash.userAgent,
+    ip: hash.ip,
+  };
+}
+
+export class SessionHashService {
+  /**
+   * 로그인 세션 생성
+   *
+   * 1. sessionId로 Redis Hash key를 만듭니다.
+   * 2. 현재 시간을 기준으로 발급 시간과 만료 시간을 계산합니다.
+   * 3. 세션 정보를 Redis Hash 필드로 저장합니다.
+   * 4. TTL을 설정해 만료 시간이 지나면 세션이 자동 삭제되게 합니다.
+   *
+   * 실습 포인트:
+   * Redis Hash는 세션 정보를 필드별로 저장할 수 있어 userId 같은 특정 값만 따로 조회하기 쉽습니다.
+   */
+  async createSession(input: CreateSessionInput, ttlSeconds = 60 * 60): Promise<SessionOutput> {
+    // 로그인 세션 Hash key입니다.
+    // 예: hash:session:abc123
+    const key = RedisKey.hash.userSession(input.sessionId);
+
+    // issuedAt/expiresAt은 서버 시간을 기준으로 계산합니다.
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + ttlSeconds * 1000);
+
+    const session: SessionOutput = {
+      sessionId: input.sessionId,
+      userId: input.userId,
+      email: input.email,
+      role: input.role,
+      issuedAt: now.toISOString(),
+      expiresAt: expiresAt.toISOString(),
+      lastAccessedAt: now.toISOString(),
+      userAgent: input.userAgent ?? '',
+      ip: input.ip ?? '',
+    };
+
+    // Redis Hash의 field/value는 문자열 기반으로 다루는 것이 안전합니다.
+    await redis.hSet(key, {
+      sessionId: session.sessionId,
+      userId: String(session.userId),
+      email: session.email,
+      role: session.role,
+      issuedAt: session.issuedAt,
+      expiresAt: session.expiresAt,
+      lastAccessedAt: session.lastAccessedAt,
+      userAgent: session.userAgent,
+      ip: session.ip,
+    });
+
+    // TTL 기본값은 1시간입니다.
+    // 시간이 지나면 Redis가 세션 key를 자동 삭제합니다.
+    await redis.expire(key, ttlSeconds);
+
+    return session;
+  }
+
+  /**
+   * 세션 전체 조회
+   *
+   * 1. sessionId로 Redis Hash key를 만듭니다.
+   * 2. hGetAll로 세션 Hash 전체 필드를 조회합니다.
+   * 3. Redis 조회 결과를 SessionOutput 형태로 변환합니다.
+   */
+  async getSession(sessionId: string): Promise<SessionOutput | null> {
+    const key = RedisKey.hash.userSession(sessionId);
+    const hash = await redis.hGetAll(key);
+
+    return parseSessionHash(hash);
+  }
+
+  /**
+   * 세션의 사용자 ID만 조회
+   *
+   * 1. sessionId로 Redis Hash key를 만듭니다.
+   * 2. hGet으로 userId 필드만 조회합니다.
+   * 3. 값이 있으면 숫자로 변환하고, 없으면 null을 반환합니다.
+   *
+   * 실습 포인트:
+   * Redis Hash는 전체 객체를 읽지 않고 특정 field만 조회할 수 있습니다.
+   */
+  async getSessionUserId(sessionId: string): Promise<number | null> {
+    const key = RedisKey.hash.userSession(sessionId);
+    const userId = await redis.hGet(key, 'userId');
+
+    return userId ? Number(userId) : null;
+  }
+
+  /**
+   * 마지막 접근 시간 갱신
+   *
+   * 1. sessionId로 Redis Hash key를 만듭니다.
+   * 2. 현재 시간을 ISO 문자열로 만듭니다.
+   * 3. lastAccessedAt 필드만 갱신합니다.
+   *
+   * 실습 포인트:
+   * 세션 전체를 다시 저장하지 않고 필요한 field만 수정할 수 있습니다.
+   */
+  async touchSession(sessionId: string): Promise<void> {
+    const key = RedisKey.hash.userSession(sessionId);
+
+    await redis.hSet(key, {
+      lastAccessedAt: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * 세션 TTL 조회
+   *
+   * 1. sessionId로 Redis Hash key를 만듭니다.
+   * 2. Redis에 남아 있는 TTL을 초 단위로 조회합니다.
+   *
+   * 실습 포인트:
+   * ttl 결과가 -2이면 key가 없고, -1이면 key는 있지만 만료 시간이 설정되지 않은 상태입니다.
+   */
+  async getSessionTtl(sessionId: string): Promise<number> {
+    const key = RedisKey.hash.userSession(sessionId);
+    return redis.ttl(key);
+  }
+
+  /**
+   * 세션 삭제
+   *
+   * 1. sessionId로 Redis Hash key를 만듭니다.
+   * 2. 해당 세션 key를 Redis에서 삭제합니다.
+   *
+   * 실습 포인트:
+   * 로그아웃이나 강제 만료 처리에서는 TTL을 기다리지 않고 세션을 바로 삭제합니다.
+   */
+  async deleteSession(sessionId: string): Promise<void> {
+    const key = RedisKey.hash.userSession(sessionId);
+    await redis.del(key);
+  }
+}

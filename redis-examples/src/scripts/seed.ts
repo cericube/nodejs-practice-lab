@@ -1,6 +1,6 @@
 import { prisma } from '../lib/prisma.js';
 import { connectRedis, disconnectRedis } from '../lib/redis.js';
-import { PostService } from '../service/post.service.js';
+import { PostService } from '../services/post.service.js';
 
 async function main() {
   await prisma.post.deleteMany();
@@ -13,36 +13,36 @@ async function main() {
   await postService.createPost({
     title: 'Redis String 실습',
     content: '게시글 상세 정보를 Redis String으로 캐싱하는 예제입니다.',
-    author: 'kim',
+    authorId: 1,
     status: 'PUBLISHED',
   });
 
   await postService.createPost({
     title: 'Redis Hash 실습',
     content: '게시글 요약 정보를 Redis Hash로 저장하는 예제입니다.',
-    author: 'kim',
+    authorId: 1,
     status: 'PUBLISHED',
   });
 
   await postService.createPost({
     title: 'Redis Sorted Set 실습',
     content: '인기 게시글 랭킹을 Redis Sorted Set으로 구현하는 예제입니다.',
-    author: 'kim',
+    authorId: 1,
     status: 'DRAFT',
   });
 
-  const posts = await postService.getPosts();
+  // const posts = await postService.getPosts();
 
-  console.log('Seed posts:');
-  console.table(
-    posts.map((post) => ({
-      id: post.id,
-      title: post.title,
-      author: post.author,
-      status: post.status,
-      viewCount: post.viewCount,
-    })),
-  );
+  // console.log('Seed posts:');
+  // console.table(
+  //   posts.map((post) => ({
+  //     id: post.id,
+  //     title: post.title,
+  //     authorId: post.authorId,
+  //     status: post.status,
+  //     viewCount: post.viewCount,
+  //   })),
+  // );
 }
 
 main()
