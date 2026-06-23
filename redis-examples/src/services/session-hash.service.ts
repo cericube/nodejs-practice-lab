@@ -1,3 +1,5 @@
+// src/services/session-hash.service.ts
+
 import { redis } from '../lib/redis.js';
 import { RedisKey } from '../redis/redis-key.js';
 
