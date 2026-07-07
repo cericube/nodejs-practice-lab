@@ -42,7 +42,7 @@ export const RedisKey = {
     postLikes: (postId: number) => `set:post-likes:${postId}`, // 게시글 좋아요 사용자 목록
     dailyVisitors: (date: string) => `set:daily-visitors:${date}`, // 일일 방문자 중복 제거
     onlineUsers: () => `set:online-users`, // 현재 온라인 사용자 목록
-    duplicateRequest: (requestId: string) => `set:duplicate-request:${requestId}`, // 중복 요청 방지
+    duplicateRequest: (requestGroup: string) => `set:duplicate-request:${requestGroup}`, // 중복 요청 방지
   },
 
   zset: {
