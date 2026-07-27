@@ -42,28 +42,21 @@ export class RateLimitService {
     // TTL 없는 제한 키가 남을 수 있습니다.
     // 실서비스라면 Lua script나 Redis transaction으로 묶는 방식을 고려할 수 있습니다.
 
-    // INCR은 Redis에서 원자적으로 처리됩니다.
-    // 동시에 여러 요청이 들어와도 count 증가 값이 깨지지 않습니다.
-    // 기존 값 없음 → 0으로 간주 → +1 → 1 저장
+    // 요청 제한 카운터를 1 증가시킵니다.
+    // 기존 값에 1을 더한 결과를 반환하며, 저장된 값이 없으면 0에서 시작합니다.
     const count = await redis.incr(redisKey);
 
-    // ttl 결과 의미:
-    // - 양수: key가 만료되기까지 남은 시간(초)
-    // - -1: key는 있지만 만료 시간이 없음
-    // - -2: key가 없음
-    //redis.ttl()    → 남은 만료 시간을 조회한다
+    // 요청 제한 카운터의 남은 유효 시간을 조회합니다.
+    // TTL을 초 단위로 반환하며, 만료 설정이 없으면 -1을, 데이터가 없으면 -2를 반환합니다.
     let ttl = await redis.ttl(redisKey);
 
     if (count === 1 || ttl === -1) {
-      // count === 1:
-      //   현재 제한 윈도우의 첫 요청이므로 TTL을 새로 설정합니다.
-      //
-      // ttl === -1:
-      //   INCR은 성공했지만 EXPIRE가 누락된 key일 수 있으므로 TTL을 복구합니다.
-      // redis.expire() → 만료 시간을 설정한다
+      // 요청 제한 카운터이 일정 시간이 지나면 자동으로 정리되도록 설정합니다.
+      // 만료 시간을 설정하면 1을, 요청 제한 데이터가 없으면 0을 반환합니다.
       await redis.expire(redisKey, windowSeconds);
 
-      // expire 이후 남은 시간을 다시 조회해 응답 값과 Redis 상태를 맞춥니다.
+      // 요청 제한 카운터의 남은 유효 시간을 조회합니다.
+      // TTL을 초 단위로 반환하며, 만료 설정이 없으면 -1을, 데이터가 없으면 -2를 반환합니다.
       ttl = await redis.ttl(redisKey);
     }
 
@@ -151,6 +144,8 @@ export class RateLimitService {
    */
   async getCurrentCount(key: string): Promise<number> {
     const redisKey = RedisKey.string.rateLimit(key);
+    // 저장된 요청 제한 카운터 값을 조회합니다.
+    // 저장된 값이 없으면 null을 반환합니다.
     const value = await redis.get(redisKey);
 
     // Redis get 결과는 문자열 또는 null입니다.
@@ -168,6 +163,8 @@ export class RateLimitService {
    */
   async resetLimit(key: string): Promise<void> {
     const redisKey = RedisKey.string.rateLimit(key);
+    // 요청 제한 카운터 데이터를 초기화합니다.
+    // 데이터를 삭제하고 삭제한 키 수를 반환하며, 저장된 데이터가 없으면 0을 반환합니다.
     await redis.del(redisKey);
   }
 }

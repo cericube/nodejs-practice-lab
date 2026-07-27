@@ -76,10 +76,12 @@ export class LogListService {
       createdAt: new Date().toISOString(),
     };
 
-    // LPUSH는 값을 List 왼쪽에 추가합니다. 여기서는 왼쪽을 최신 로그 위치로 사용합니다.
+    // 최근 로그 버퍼의 최신 위치에 새 항목을 추가합니다.
+    // 목록 왼쪽에 값을 추가하고 추가 후 전체 항목 수를 반환합니다.
     await redis.lPush(key, JSON.stringify(entry));
 
-    // LTRIM은 지정한 인덱스 범위만 남깁니다. 0부터 limit - 1까지만 유지해 오래된 로그를 잘라냅니다.
+    // 최근 로그 버퍼이 허용된 개수만 유지되도록 정리합니다.
+    // 지정한 범위만 남기고 나머지를 제거하며, 성공하면 OK를 반환합니다.
     await redis.lTrim(key, 0, limit - 1);
 
     return entry;
@@ -102,7 +104,8 @@ export class LogListService {
   async getRecentLogs(limit = 100): Promise<LogBufferEntry[]> {
     const key = RedisKey.list.logBuffer();
 
-    // LRANGE는 시작 인덱스부터 끝 인덱스까지 값을 읽습니다. 0부터 읽으면 최신 로그부터 조회됩니다.
+    // 최근 로그 버퍼에서 필요한 범위의 항목을 조회합니다.
+    // 지정한 범위의 값을 순서대로 반환하며, 저장된 항목이 없으면 빈 배열을 반환합니다.
     const values = await redis.lRange(key, 0, limit - 1);
 
     return values.map(parseLogEntry).filter((entry): entry is LogBufferEntry => entry !== null);
@@ -135,7 +138,8 @@ export class LogListService {
   async getLogCount(): Promise<number> {
     const key = RedisKey.list.logBuffer();
 
-    // LLEN은 List 길이를 반환합니다. key가 없으면 비어 있는 List처럼 0을 반환합니다.
+    // 최근 로그 버퍼에 저장된 항목 수를 조회합니다.
+    // 전체 항목 수를 반환하며, 목록이 없으면 0을 반환합니다.
     return redis.lLen(key);
   }
 
@@ -151,7 +155,8 @@ export class LogListService {
   async clearLogs(): Promise<void> {
     const key = RedisKey.list.logBuffer();
 
-    // DEL은 key와 그 안의 데이터를 함께 삭제합니다. key가 없어도 에러 없이 0건 삭제로 처리됩니다.
+    // 최근 로그 버퍼 데이터를 초기화합니다.
+    // 데이터를 삭제하고 삭제한 키 수를 반환하며, 저장된 데이터가 없으면 0을 반환합니다.
     await redis.del(key);
   }
 }

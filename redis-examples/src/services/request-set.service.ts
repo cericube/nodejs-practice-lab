@@ -41,13 +41,20 @@ export class RequestSetService {
   ): Promise<DuplicateRequestResult> {
     const key = RedisKey.set.duplicateRequest(requestGroup);
 
-    // SADD 결과가 1이면 최초 요청, 0이면 이미 기록된 중복 요청입니다.
+    // 중복 요청 기록에 새 요청 ID을 중복 없이 기록합니다.
+    // 새로 추가한 항목 수를 반환하며, 이미 기록된 요청 ID이면 0을 반환합니다.
     const addedCount = await redis.sAdd(key, requestId);
 
-    // 중복 요청 기록은 ttlSeconds 동안만 유지합니다.
+    // 중복 요청 기록이 일정 시간이 지나면 자동으로 정리되도록 설정합니다.
+    // 만료 시간을 설정하면 1을, 요청 ID 데이터가 없으면 0을 반환합니다.
     await redis.expire(key, ttlSeconds);
 
+    // 중복 요청 기록에 기록된 고유 요청 ID 수를 조회합니다.
+    // 중복이 제거된 전체 항목 수를 반환하며, 목록이 없으면 0을 반환합니다.
     const storedRequestCount = await redis.sCard(key);
+
+    // 중복 요청 기록의 남은 유효 시간을 조회합니다.
+    // TTL을 초 단위로 반환하며, 만료 설정이 없으면 -1을, 데이터가 없으면 -2를 반환합니다.
     const ttl = await redis.ttl(key);
 
     return {
@@ -73,7 +80,8 @@ export class RequestSetService {
   async isDuplicateRequest(requestGroup: string, requestId: string): Promise<boolean> {
     const key = RedisKey.set.duplicateRequest(requestGroup);
 
-    // redis@6의 SISMEMBER 래퍼는 1 또는 0을 반환하므로 boolean으로 변환합니다.
+    // 지정한 요청 ID이 중복 요청 기록에 포함되어 있는지 확인합니다.
+    // 포함되어 있으면 1을, 포함되어 있지 않거나 목록이 없으면 0을 반환합니다.
     const result = await redis.sIsMember(key, requestId);
     return result === 1;
   }
@@ -120,7 +128,8 @@ export class RequestSetService {
   async getStoredRequestCount(requestGroup: string): Promise<number> {
     const key = RedisKey.set.duplicateRequest(requestGroup);
 
-    // key가 없으면 SCARD는 0을 반환합니다.
+    // 중복 요청 기록에 기록된 고유 요청 ID 수를 조회합니다.
+    // 중복이 제거된 전체 항목 수를 반환하며, 목록이 없으면 0을 반환합니다.
     return redis.sCard(key);
   }
 
@@ -136,7 +145,8 @@ export class RequestSetService {
   async clearDuplicateRequests(requestGroup: string): Promise<void> {
     const key = RedisKey.set.duplicateRequest(requestGroup);
 
-    // DEL은 key가 없어도 에러 없이 0건 삭제로 처리합니다.
+    // 중복 요청 기록 데이터를 초기화합니다.
+    // 데이터를 삭제하고 삭제한 키 수를 반환하며, 저장된 데이터가 없으면 0을 반환합니다.
     await redis.del(key);
   }
 }

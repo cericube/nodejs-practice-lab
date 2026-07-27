@@ -120,6 +120,8 @@ export class UserSettingHashService {
   async saveUserSettingToHash(setting: UserSettingOutput): Promise<void> {
     const key = RedisKey.hash.userSetting(setting.userId);
 
+    // 사용자 설정 캐시의 필드 값을 저장하거나 갱신합니다.
+    // 여러 필드를 함께 저장하고 새로 추가된 필드 수를 반환하며, 기존 필드는 값을 덮어씁니다.
     await redis.hSet(key, {
       theme: setting.theme,
       language: setting.language,
@@ -143,6 +145,8 @@ export class UserSettingHashService {
    */
   async getUserSetting(userId: number): Promise<UserSettingOutput> {
     const key = RedisKey.hash.userSetting(userId);
+    // 사용자 설정 캐시의 모든 필드를 조회합니다.
+    // 전체 필드와 값을 반환하며, 저장된 데이터가 없으면 빈 객체를 반환합니다.
     const hash = await redis.hGetAll(key);
 
     const setting = parseUserSettingHash(userId, hash);
@@ -205,6 +209,8 @@ export class UserSettingHashService {
       fieldsToUpdate.marketingAgreed = String(input.marketingAgreed);
     }
 
+    // 사용자 설정 캐시의 필드 값을 저장하거나 갱신합니다.
+    // 여러 필드를 함께 저장하고 새로 추가된 필드 수를 반환하며, 기존 필드는 값을 덮어씁니다.
     await redis.hSet(key, fieldsToUpdate);
 
     return this.getUserSetting(userId);
@@ -227,6 +233,8 @@ export class UserSettingHashService {
     field: keyof Omit<UserSettingOutput, 'userId'>,
   ): Promise<string | null> {
     const key = RedisKey.hash.userSetting(userId);
+    // 사용자 설정 캐시에서 필요한 필드 하나를 조회합니다.
+    // 필드 값을 반환하며, 해당 필드나 데이터가 없으면 null을 반환합니다.
     return redis.hGet(key, field);
   }
 
@@ -241,6 +249,8 @@ export class UserSettingHashService {
    */
   async deleteUserSetting(userId: number): Promise<void> {
     const key = RedisKey.hash.userSetting(userId);
+    // 사용자 설정 캐시 데이터를 초기화합니다.
+    // 데이터를 삭제하고 삭제한 키 수를 반환하며, 저장된 데이터가 없으면 0을 반환합니다.
     await redis.del(key);
   }
 }

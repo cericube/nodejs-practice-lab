@@ -32,8 +32,8 @@ export class AuthService {
     // 예: string:auth-code:test@example.com
     const key = RedisKey.string.authCode(email);
 
-    // EX: 180은 이 key를 180초 후 Redis가 자동 삭제하도록 만드는 옵션입니다.
-    // 즉, 사용자는 180초 안에 인증 코드를 입력해야 합니다.
+    // 이메일 인증 코드를 제한 시간 동안 저장합니다.
+    // EX 옵션으로 180초 뒤 만료되게 저장하며, 성공하면 OK를 반환합니다.
     await redis.set(key, authCode, {
       EX: 180,
     });
@@ -52,7 +52,8 @@ export class AuthService {
   async verifyEmailAuthCode(email: string, inputCode: string): Promise<boolean> {
     const key = RedisKey.string.authCode(email);
 
-    // TTL 180초가 지나면 Redis가 key를 자동 삭제하므로 savedCode는 null이 됩니다.
+    // 저장된 이메일 인증 코드 값을 조회합니다.
+    // 저장된 값이 없으면 null을 반환합니다.
     const savedCode = await redis.get(key);
 
     if (!savedCode) {
@@ -62,7 +63,8 @@ export class AuthService {
     const isValid = savedCode === inputCode;
 
     if (isValid) {
-      // 인증 성공 후 삭제하면 인증 코드는 1회용처럼 동작합니다.
+      // 이메일 인증 코드 데이터를 초기화합니다.
+      // 데이터를 삭제하고 삭제한 키 수를 반환하며, 저장된 데이터가 없으면 0을 반환합니다.
       await redis.del(key);
     }
 
@@ -79,6 +81,8 @@ export class AuthService {
    */
   async getAuthCodeTtl(email: string): Promise<number> {
     const key = RedisKey.string.authCode(email);
+    // 이메일 인증 코드의 남은 유효 시간을 조회합니다.
+    // TTL을 초 단위로 반환하며, 만료 설정이 없으면 -1을, 데이터가 없으면 -2를 반환합니다.
     return redis.ttl(key);
   }
 }

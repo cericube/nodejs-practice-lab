@@ -61,18 +61,22 @@ export class VisitorSetService {
     const key = RedisKey.set.dailyVisitors(date);
     const member = createVisitorMember(userId);
 
-    // TTL을 처음 생성된 Set에만 걸기 위해 기존 key 존재 여부를 먼저 확인합니다.
+    // 일일 방문자 목록이 이미 생성되어 있는지 확인합니다.
+    // 목록이 존재하면 1을, 존재하지 않으면 0을 반환합니다.
     const exists = await redis.exists(key);
 
-    // SADD는 Set에 새 member가 추가되면 1, 이미 있던 member이면 0을 반환합니다.
+    // 일일 방문자 목록에 새 방문자을 중복 없이 기록합니다.
+    // 새로 추가한 항목 수를 반환하며, 이미 기록된 방문자이면 0을 반환합니다.
     const addedCount = await redis.sAdd(key, member);
 
     if (exists === 0) {
-      // 방문자 Set은 실습 데이터가 오래 남지 않도록 2일 뒤 만료시킵니다.
+      // 일일 방문자 목록이 일정 시간이 지나면 자동으로 정리되도록 설정합니다.
+      // 만료 시간을 설정하면 1을, 방문자 데이터가 없으면 0을 반환합니다.
       await redis.expire(key, 60 * 60 * 24 * 2);
     }
 
-    // SCARD 결과는 중복 제거된 로그인 방문자 수입니다.
+    // 일일 방문자 목록에 기록된 고유 방문자 수를 조회합니다.
+    // 중복이 제거된 전체 항목 수를 반환하며, 목록이 없으면 0을 반환합니다.
     const visitorCount = await redis.sCard(key);
 
     return {
@@ -95,7 +99,8 @@ export class VisitorSetService {
   async getDailyVisitorCount(date: string): Promise<number> {
     const key = RedisKey.set.dailyVisitors(date);
 
-    // key가 없으면 SCARD는 0을 반환합니다.
+    // 일일 방문자 목록에 기록된 고유 방문자 수를 조회합니다.
+    // 중복이 제거된 전체 항목 수를 반환하며, 목록이 없으면 0을 반환합니다.
     return redis.sCard(key);
   }
 
@@ -114,7 +119,8 @@ export class VisitorSetService {
     const key = RedisKey.set.dailyVisitors(date);
     const member = createVisitorMember(userId);
 
-    // redis@6의 SISMEMBER 래퍼는 1 또는 0을 반환하므로 boolean으로 변환합니다.
+    // 지정한 방문자이 일일 방문자 목록에 포함되어 있는지 확인합니다.
+    // 포함되어 있으면 1을, 포함되어 있지 않거나 목록이 없으면 0을 반환합니다.
     const result = await redis.sIsMember(key, member);
 
     return result === 1;
@@ -138,7 +144,8 @@ export class VisitorSetService {
   async getDailyVisitorSummary(date: string): Promise<DailyVisitorSummaryOutput> {
     const key = RedisKey.set.dailyVisitors(date);
 
-    // Set의 반환 순서는 보장되지 않으므로 응답 확인이 쉽도록 정렬합니다.
+    // 일일 방문자 목록에 기록된 모든 방문자을 조회합니다.
+    // 저장 순서와 관계없이 모든 항목을 반환하며, 목록이 없으면 빈 배열을 반환합니다.
     const userIds = (await redis.sMembers(key)).map(Number).sort((a, b) => a - b);
 
     return {
@@ -163,7 +170,8 @@ export class VisitorSetService {
   async deleteDailyVisitors(date: string): Promise<void> {
     const key = RedisKey.set.dailyVisitors(date);
 
-    // DEL은 key가 없어도 에러 없이 0건 삭제로 처리합니다.
+    // 일일 방문자 목록 데이터를 초기화합니다.
+    // 데이터를 삭제하고 삭제한 키 수를 반환하며, 저장된 데이터가 없으면 0을 반환합니다.
     await redis.del(key);
   }
 }

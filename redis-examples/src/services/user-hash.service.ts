@@ -127,7 +127,8 @@ export class UserHashService {
     // 예: hash:user-profile:1
     const key = RedisKey.hash.userProfile(user.id);
 
-    // Redis Hash의 field/value는 문자열 기반으로 다루는 것이 안전합니다.
+    // 사용자 프로필 캐시의 필드 값을 저장하거나 갱신합니다.
+    // 여러 필드를 함께 저장하고 새로 추가된 필드 수를 반환하며, 기존 필드는 값을 덮어씁니다.
     await redis.hSet(key, {
       id: String(user.id),
       email: user.email,
@@ -138,8 +139,8 @@ export class UserHashService {
       updatedAt: user.updatedAt,
     });
 
-    // TTL 300초가 기본값입니다.
-    // 시간이 지나면 Redis가 key를 자동 삭제합니다.
+    // 사용자 프로필 캐시이 일정 시간이 지나면 자동으로 정리되도록 설정합니다.
+    // 만료 시간을 설정하면 1을, 사용자 프로필 캐시가 없으면 0을 반환합니다.
     await redis.expire(key, ttlSeconds);
   }
 
@@ -152,6 +153,8 @@ export class UserHashService {
    */
   async getUserProfileFromHash(userId: number): Promise<UserProfileOutput | null> {
     const key = RedisKey.hash.userProfile(userId);
+    // 사용자 프로필 캐시의 모든 필드를 조회합니다.
+    // 전체 필드와 값을 반환하며, 저장된 데이터가 없으면 빈 객체를 반환합니다.
     const hash = await redis.hGetAll(key);
 
     return parseUserProfileHash(hash);
@@ -272,6 +275,8 @@ export class UserHashService {
    */
   async deleteUserProfileHash(userId: number): Promise<void> {
     const key = RedisKey.hash.userProfile(userId);
+    // 사용자 프로필 캐시 데이터를 초기화합니다.
+    // 데이터를 삭제하고 삭제한 키 수를 반환하며, 저장된 데이터가 없으면 0을 반환합니다.
     await redis.del(key);
   }
 

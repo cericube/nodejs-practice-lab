@@ -22,6 +22,8 @@ export class CacheService {
    * @returns 캐시가 있으면 객체, 없으면 null
    */
   async getJson<T>(key: string): Promise<T | null> {
+    // Redis 명령: GET key
+    // key의 문자열 값을 반환하며, key가 없으면 null을 반환합니다.
     const cached = await redis.get(key);
 
     if (!cached) {
@@ -53,6 +55,8 @@ export class CacheService {
 
     const serializedValue = JSON.stringify(value);
 
+    // Redis 명령: SET key value EX ttlSeconds
+    // 문자열 값을 저장하고 EX로 ttlSeconds 후 만료되게 설정하며, 성공하면 OK를 반환합니다.
     await redis.set(key, serializedValue, {
       EX: ttlSeconds,
     });
@@ -66,6 +70,8 @@ export class CacheService {
    * @param key 삭제할 Redis key
    */
   async deleteCache(key: string): Promise<void> {
+    // Redis 명령: DEL key
+    // key를 삭제하고 삭제한 key 수를 반환하며, key가 없으면 0을 반환합니다.
     await redis.del(key);
   }
 
@@ -76,6 +82,8 @@ export class CacheService {
    * @returns key가 존재하면 true, 없으면 false
    */
   async exists(key: string): Promise<boolean> {
+    // Redis 명령: EXISTS key
+    // key가 존재하면 1을, 존재하지 않으면 0을 반환합니다.
     const result = await redis.exists(key);
     return result === 1;
   }

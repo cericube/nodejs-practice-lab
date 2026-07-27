@@ -64,6 +64,8 @@ export class PostService {
     // 예: string:post-view-count:1
     const key = RedisKey.string.postViewCount(postId);
 
+    // 게시글 조회수를 1 증가시킵니다.
+    // 기존 값에 1을 더한 결과를 반환하며, 저장된 값이 없으면 0에서 시작합니다.
     return redis.incr(key);
   }
 
@@ -76,6 +78,8 @@ export class PostService {
    */
   async getRedisViewCount(postId: number): Promise<number> {
     const key = RedisKey.string.postViewCount(postId);
+    // 저장된 게시글 조회수 값을 조회합니다.
+    // 저장된 값이 없으면 null을 반환합니다.
     const value = await redis.get(key);
 
     // Redis get 결과는 문자열 또는 null입니다.
@@ -126,8 +130,8 @@ export class PostService {
   async syncViewCountToDatabase(postId: number) {
     const key = RedisKey.string.postViewCount(postId);
 
-    // GETDEL은 Redis 값을 가져오면서 key를 삭제합니다.
-    // value는 문자열 또는 null이므로 숫자로 변환해 사용합니다.
+    // 저장된 게시글 조회수 값을 한 번만 사용하도록 가져옵니다.
+    // 값을 반환하면서 데이터를 삭제하며, 저장된 값이 없으면 null을 반환합니다.
     const value = await redis.getDel(key);
     const redisViewCount = value ? Number(value) : 0;
 
@@ -147,8 +151,8 @@ export class PostService {
         },
       });
     } catch (error) {
-      // DB 반영에 실패하면 GETDEL로 삭제했던 조회수를 Redis에 다시 더합니다.
-      // 이렇게 하지 않으면 실패한 조회수 증가분이 사라질 수 있습니다.
+      // 게시글 조회수를 지정한 값만큼 조정합니다.
+      // 증감 값을 반영한 결과를 반환하며, 저장된 값이 없으면 0에서 시작합니다.
       await redis.incrBy(key, redisViewCount);
       throw error;
     }

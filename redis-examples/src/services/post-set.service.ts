@@ -90,10 +90,12 @@ export class PostSetService {
     const key = RedisKey.set.postLikes(postId);
     const member = String(userId);
 
-    // SADD는 이미 같은 member가 있으면 Set을 변경하지 않습니다.
+    // 게시글 좋아요 사용자 목록에 새 사용자을 중복 없이 기록합니다.
+    // 새로 추가한 항목 수를 반환하며, 이미 기록된 사용자이면 0을 반환합니다.
     await redis.sAdd(key, member);
 
-    // SCARD 결과를 Redis에 기록된 현재 좋아요 수로 사용합니다.
+    // 게시글 좋아요 사용자 목록에 기록된 고유 사용자 수를 조회합니다.
+    // 중복이 제거된 전체 항목 수를 반환하며, 목록이 없으면 0을 반환합니다.
     const likeCount = await redis.sCard(key);
 
     return {
@@ -122,10 +124,12 @@ export class PostSetService {
     const key = RedisKey.set.postLikes(postId);
     const member = String(userId);
 
-    // SREM은 member가 없어도 실패하지 않고 제거 건수 0으로 처리합니다.
+    // 게시글 좋아요 사용자 목록에서 지정한 사용자을 제거합니다.
+    // 제거한 항목 수를 반환하며, 사용자이 없으면 0을 반환합니다.
     await redis.sRem(key, member);
 
-    // 제거 후 남은 member 수를 다시 조회해 좋아요 수를 맞춥니다.
+    // 게시글 좋아요 사용자 목록에 기록된 고유 사용자 수를 조회합니다.
+    // 중복이 제거된 전체 항목 수를 반환하며, 목록이 없으면 0을 반환합니다.
     const likeCount = await redis.sCard(key);
 
     return {
@@ -153,7 +157,8 @@ export class PostSetService {
     const key = RedisKey.set.postLikes(postId);
     const member = String(userId);
 
-    // redis@6의 SISMEMBER 래퍼는 1 또는 0을 반환하므로 boolean으로 변환합니다.
+    // 지정한 사용자이 게시글 좋아요 사용자 목록에 포함되어 있는지 확인합니다.
+    // 포함되어 있으면 1을, 포함되어 있지 않거나 목록이 없으면 0을 반환합니다.
     const result = await redis.sIsMember(key, member);
 
     return result === 1;
@@ -171,7 +176,8 @@ export class PostSetService {
   async getPostLikeCount(postId: number): Promise<number> {
     const key = RedisKey.set.postLikes(postId);
 
-    // key가 없으면 SCARD는 0을 반환합니다.
+    // 게시글 좋아요 사용자 목록에 기록된 고유 사용자 수를 조회합니다.
+    // 중복이 제거된 전체 항목 수를 반환하며, 목록이 없으면 0을 반환합니다.
     return redis.sCard(key);
   }
 
@@ -192,7 +198,8 @@ export class PostSetService {
   async getPostLikeSummary(postId: number): Promise<PostLikeSummaryOutput> {
     const key = RedisKey.set.postLikes(postId);
 
-    // Redis Set은 순서를 보장하지 않으므로 members의 반환 순서도 고정되지 않습니다.
+    // 게시글 좋아요 사용자 목록에 기록된 모든 사용자을 조회합니다.
+    // 저장 순서와 관계없이 모든 항목을 반환하며, 목록이 없으면 빈 배열을 반환합니다.
     const members = await redis.sMembers(key);
     const likedUserIds = members.map(Number);
 
@@ -218,7 +225,8 @@ export class PostSetService {
   async deletePostLikes(postId: number): Promise<void> {
     const key = RedisKey.set.postLikes(postId);
 
-    // DEL은 key가 없어도 에러 없이 0건 삭제로 처리합니다.
+    // 게시글 좋아요 사용자 목록 데이터를 초기화합니다.
+    // 데이터를 삭제하고 삭제한 키 수를 반환하며, 저장된 데이터가 없으면 0을 반환합니다.
     await redis.del(key);
   }
 }

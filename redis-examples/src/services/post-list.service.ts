@@ -120,13 +120,16 @@ export class PostListService {
     const key = RedisKey.list.postRecentViews(userId);
     const value = String(postId);
 
-    // LREM은 List 안에서 지정한 값을 제거합니다. count 0은 방향과 개수 제한 없이 모든 일치 값을 지운다는 뜻입니다.
+    // 사용자의 최근 본 게시글 목록에서 중복되거나 삭제할 항목을 제거합니다.
+    // 조건에 맞는 값을 제거하고 제거한 항목 수를 반환하며, 일치하는 값이 없으면 0을 반환합니다.
     await redis.lRem(key, 0, value);
 
-    // LPUSH는 값을 List 왼쪽에 추가합니다. 여기서는 왼쪽을 최신 위치로 사용합니다.
+    // 사용자의 최근 본 게시글 목록의 최신 위치에 새 항목을 추가합니다.
+    // 목록 왼쪽에 값을 추가하고 추가 후 전체 항목 수를 반환합니다.
     await redis.lPush(key, value);
 
-    // LTRIM은 지정한 인덱스 범위만 남깁니다. 0부터 limit - 1까지만 유지해 List 길이를 제한합니다.
+    // 사용자의 최근 본 게시글 목록이 허용된 개수만 유지되도록 정리합니다.
+    // 지정한 범위만 남기고 나머지를 제거하며, 성공하면 OK를 반환합니다.
     await redis.lTrim(key, 0, limit - 1);
   }
 
@@ -143,7 +146,8 @@ export class PostListService {
   async getRecentViewedPostIds(userId: number, limit = 10): Promise<number[]> {
     const key = RedisKey.list.postRecentViews(userId);
 
-    // LRANGE는 시작 인덱스부터 끝 인덱스까지의 값을 가져옵니다. 0부터 읽으면 최신 기록부터 조회됩니다.
+    // 사용자의 최근 본 게시글 목록에서 필요한 범위의 항목을 조회합니다.
+    // 지정한 범위의 값을 순서대로 반환하며, 저장된 항목이 없으면 빈 배열을 반환합니다.
     const values = await redis.lRange(key, 0, limit - 1);
 
     return values.map(Number);
@@ -199,7 +203,8 @@ export class PostListService {
    */
   async clearRecentViewedPosts(userId: number): Promise<void> {
     const key = RedisKey.list.postRecentViews(userId);
-    // DEL은 key와 그 안의 데이터를 함께 삭제합니다. key가 없어도 에러 없이 0건 삭제로 처리됩니다.
+    // 사용자의 최근 본 게시글 목록 데이터를 초기화합니다.
+    // 데이터를 삭제하고 삭제한 키 수를 반환하며, 저장된 데이터가 없으면 0을 반환합니다.
     await redis.del(key);
   }
 }
